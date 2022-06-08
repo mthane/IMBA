@@ -1,0 +1,11 @@
+*.swp
+cvblob/
+lrvTrack
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+lrvTrackConfig.h
+tags
+paper/*.pdf
+paper/*.docx*

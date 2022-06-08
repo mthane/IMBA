@@ -1,0 +1,77 @@
+Package: illav
+Title: illav
+Version: 0.0.0.9000
+Authors@R: person('AUTHOR_FIRST', 'AUTHOR_LAST', email = 'AUTHOR@MAIL.COM', role = c('cre', 'aut'))
+Description: PKG_DESC.
+License: What license is it under?
+Imports: 
+    attempt,
+    config (>= 0.3.1),
+    DT,
+    glue,
+    golem (>= 0.3.1),
+    htmltools,
+    processx,
+    shiny (>= 1.6.0),
+    thinkr,
+    shinythemes,
+    dashboardthemes,
+    shinyFiles,
+    shinyWidgets,
+    shinyjs,
+    RcppRoll,
+    shinydashboard,
+    colourpicker,
+    webshot,
+    corrr,
+    sortable,
+    data.table,
+    dplyr,
+    tidyr,
+    tidyverse,
+    caTools,
+    stats,
+    stringr,
+    scales,
+    gtools,
+    gmodels,
+    outliers,
+    spant,
+    correlation,
+    zoo,
+    ggplot2,
+    ggfortify,
+    plotly,
+    viridis,
+    cvms, 
+    grid,
+    gridExtra,
+    yardstick,
+    GGally,
+    fields,
+    RColorBrewer,
+    ggtern, 
+    factoextra,
+    cluster,
+    mclust,
+    FactoMineR,
+    randomForest,
+    caret,
+    corrplot,
+    ggcorrplot,
+    ggnewscale,
+    imagine,
+    tictoc,
+    EnvStats
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Suggests: 
+    rmarkdown,
+    knitr,
+    spelling,
+    testthat (>= 3.0.0),
+    covr
+Config/testthat/edition: 3
+Language: en-US
+VignetteBuilder: knitr
