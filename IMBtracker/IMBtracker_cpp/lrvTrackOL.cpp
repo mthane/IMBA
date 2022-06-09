@@ -2631,31 +2631,7 @@ void bg_without_larvae(Mat &fgImg)
   cvReleaseImage(&labelImg);
 }
 
-void dump_frame(const char *name, Mat &frame)
-{
-if (frameCount % 100 == 0)
-{
-	char fname[1024];
-	sprintf(fname, "%s_%05d.png", name, frameCount);
-  	imwrite(fname, frame);
-}
-}
 
-void dump_frame2(const char *name, IplImage *frame)
-{
-if (frameCount % 100 == 0)
-{
-	char fname[1024];
-	sprintf(fname, "%s_%05d.png", name, frameCount);
-	cvSaveImage(fname, frame);
-}
-}
-void dump_frame3(const char *name, Mat &frame)
-{
-{
-  	imwrite(name, frame);
-}
-}
 /* The function removes the background from the new frame
    and applies thresholding to derive the image in which we look
    for blobs.
@@ -2700,7 +2676,6 @@ void process_frame(Mat &newFrame,
     //equalizeHist(fgFrame,fgFrame);
     normalize(fgFrame,fgFrame,0,255,CV_MINMAX);
 
-dump_frame("10_foreground_subtractBg+normalize", fgFrame);
 
     //imshow("foreground",fgFrame);
     //waitKey(-1);
@@ -2732,8 +2707,6 @@ dump_frame("10_foreground_subtractBg+normalize", fgFrame);
           greyBgFrame.depth(),
           Scalar(255));
     }
-
-	dump_frame("11_foreground_roi", fgROI);
 
     for(auto &b:cupBlobs)
     {
@@ -2775,7 +2748,6 @@ dump_frame("10_foreground_subtractBg+normalize", fgFrame);
     //adaptiveBilateralFilter(fgImage,test,Size(51,51),90,90);
     //GaussianBlur(fgImage,fgImage,Size(5,5),0);
     threshold(fgImage,processedFrame,0,255,THRESH_OTSU+THRESH_BINARY);
-	dump_frame("12_processed_fg+ROI_thresh", processedFrame);
     //imshow("processFrame", fgImage);
     /*adaptiveThreshold(fgImage,
         processedFrame,
@@ -2789,8 +2761,6 @@ dump_frame("10_foreground_subtractBg+normalize", fgFrame);
     // removes outer parts of the contour
     dilate(processedFrame,processedFrame,element);
     //dilate(processedFrame,processedFrame,element);
-
-	dump_frame("13_processed_dilated", processedFrame);
     // The processedFrame is the outcome of the good image and filtered for
     // noise by the processedFrame
     processedFrame=fgImage&processedFrame;
@@ -2800,7 +2770,6 @@ dump_frame("10_foreground_subtractBg+normalize", fgFrame);
     //equalizeHist(processedFrame, processedFrame);
     //
 	
-	dump_frame("14_processed_final", processedFrame);
 }
 
 //Match lost larvae
@@ -5339,11 +5308,6 @@ int blobid = 0;
         // TS: fit vector version of larva contours onto pixel contours
         C.updateModel(l.blobs[modelFrame-l.start_frame],modelFrame,ret);
 
-//        if (modelFrame % 100 == 0)
-        {
-          sprintf(fname, "55_collisionModels_%d_%05d.png", blobid, modelFrame);
-          dump_frame3(fname, ret);
-        }
         // parameter space:
         //    whole larvae moves within 3x3 pixel neighborbood translation
         //    bending of head by angles (discretized)
@@ -5711,7 +5675,6 @@ int main(int argc, char* argv[])
   else
     extract_background(capture,bgFrame);
 
-  imwrite("00_background.png", bgFrame);
 
   //Initialize the frame size
   FRAME_COLS=bgFrame.cols;
@@ -5762,13 +5725,11 @@ int main(int argc, char* argv[])
  //   cvtColor(labelImg,tmp_P,CV_GRAY2BGR,1);
 //    cvMerge(labelImg, NULL, NULL, tmp_P);
     cvRenderBlobs(labelImg, NEW, tmp_P, tmp_P);
-    dump_frame2("20_blobs_labelled", tmp_P);
 
     cvb::cvFilterByArea(NEW, LRVTRACK_MIN_OBJ_SIZE, LRVTRACK_MAX_OBJ_SIZE);
 
     cvZero(tmp_P);
     cvRenderBlobs(labelImg, NEW, tmp_P, tmp_P);
-    dump_frame2("21_blobs_labelled_filtered", tmp_P);
 
     cvb::CvBlobs tracked_blobs;
     cvb::CvBlobs blob1;
@@ -5787,7 +5748,6 @@ int main(int argc, char* argv[])
 
     cvZero(tmp_P);
     cvRenderBlobs(labelImg, NEW, tmp_P, tmp_P);
-    dump_frame2("22_blobs_removed_at_rings", tmp_P);
 
     //cvb::CvBlobs::iterator it=NEW.begin();
     if(preBlobs.size()>0)
@@ -5849,7 +5809,6 @@ int main(int argc, char* argv[])
 
     cvZero(tmp_P);
     cvRenderBlobs(labelImg, tracked_blobs, tmp_P, tmp_P);
-    dump_frame2("31_blobs_tracked_from_prev_frame", tmp_P);
 
     cvReleaseImage(&tmp_P);
     cvReleaseImage(&labelImg);

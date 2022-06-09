@@ -24,8 +24,8 @@ FORCING = 0				#1: Force an assignment for an illogically sound combination of a
 ##################################
 ### LOAD LIBRARIES, SET PATH #####
 ##################################
-library(xlsx)
-library(FactoMineR)
+#library(xlsx)
+#library(FactoMineR)
 #C:\Users\sebas_000\Desktop\DATEN 27.01.2016\AM_Rewarded
 #C:\Users\Sebastian\Desktop\TRACKED_ON_13_01_2016M\Train_FRU_Test_T1\AM_Rewarded
 #C:\Users\sebas_000\Desktop\Backup AM_Rewarded\AM_Rewarded
@@ -90,7 +90,7 @@ assignments <- data.frame(Incoming=numeric(),Outgoing=numeric(),TypeOfCollision=
 #http://little-book-of-r-for-multivariate-analysis.readthedocs.org/en/latest/src/multivariateanalysis.html
 mosthighlycorrelated <- function(mydataframe,numtoreport)
   {
-     cormatrix <- cor(mydataframe, method="spearman")				#Spearman für nonparamatrical data 
+     cormatrix <- cor(mydataframe, method="spearman")				#Spearman fï¿½r nonparamatrical data 
      diag(cormatrix) <- 0
      cormatrix[lower.tri(cormatrix)] <- 0
      fm <- as.data.frame(as.table(cormatrix))
@@ -234,7 +234,8 @@ expl.var <- rbind(expl.var,(needed.pca$sdev)^2/length(needed.pca$sdev))
 
 
 #Plotting stuff... 
-if(FALSE){
+if(T){
+jpeg(file="saving_plot1.jpeg")
 boxplot(cbind(expl.var,rep(1,nrow(eigenvalues))), xaxt="n", yaxt="n", ylim=c(0,1), horizontal=T, border=c("black","blue","darkgreen","brown","white"),at=c(1,1,1,1,.8), names=F)
 mtext("eigenvalues",side=1, line=2.25) 
 axis(1, at=seq(0,1,1))
@@ -244,6 +245,7 @@ legend((-.28+4*0.003),.5,"PC4",bty="n",cex=.8, text.col="brown")
 legend((-.15+4*0.015),.5,"PC3",bty="n",cex=.8,text.col="darkgreen")
 legend((-.25+4*0.117),.5,"PC2",bty="n",cex=.8,text.col="blue")
 legend((-.25+4*0.89),.5,"PC1",bty="n",cex=.8,text.col="black")
+dev.off()
 }
 
 ######################################################
@@ -255,7 +257,7 @@ if(FALSE){
 setwd(box.path)
 
 #####Test by view####################
-#Länge der tracks bestimmen
+#Lï¿½nge der tracks bestimmen
 tracklength <- data.frame(unique(needed$csv_Number))
 colnames(tracklength) = c("csv_Number")
 tracklength$length <- 0
@@ -803,7 +805,7 @@ n_assignments <- n_assignments + sum(wilcox3$decided)
 ### Nx1 collisions ##############################
 #################################################
 #Das ist noch bei weitem nicht perfekt. Sobald ein 2-bundle in den Rand geht, 
-#kann ich nichts mehr lösen, sobald zu Beginn != 0 im Rand sind, kann ich auch 
+#kann ich nichts mehr lï¿½sen, sobald zu Beginn != 0 im Rand sind, kann ich auch 
 #nichts machen... 
 
 #cross testing added
@@ -1034,7 +1036,7 @@ for(i in 1:nrow(inout))
 
 	    } #max.frames>=10
 	  } #mehr als 1 in border
-	} #larve verlässt border
+	} #larve verlï¿½sst border
   } #inout zeile loop
 } #if inout>0
 } #keine 2er bundles gehen rein!

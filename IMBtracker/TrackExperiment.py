@@ -2,6 +2,7 @@ import sys
 import cv2
 import os
 import shutil
+import time
 import numpy as np
 import datetime
 import subprocess
@@ -11,8 +12,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from distutils.filelist import FileList
 
-LRVTRACK = '/home/epaisios/sources/lrvTrack.local/src/lrvTrack'
-TMPDIR = '/tmp/Track'
+LRVTRACK = './IMBtracker_cpp/lrvTrack'
+LRVTRACK = os.path.abspath(LRVTRACK)
+TMPDIR = '/tmp'
 #from TrackUI import Ui_TrackExperiment
 from TrackUI import Ui_MainWindow
 
@@ -21,8 +23,8 @@ class trackWorker(QtCore.QObject):
     process_next = pyqtSignal(int, int, name="proccessNext")
     process_end = pyqtSignal()
 
-    def __init__(self):
-        super().__init__()
+    #def __init__(self):
+    #    super().__init__()
 
     def setup(self, videos_model, bigDishRadioVal,
                  brightnessVal, contrastVal, gammaVal,
@@ -106,45 +108,46 @@ class trackWorker(QtCore.QObject):
             else:
                 collisionlist = []
 
-            trackP = QtCore.QProcess()
-            env = QtCore.QProcessEnvironment.systemEnvironment()
-            env.insert("LD_LIBRARY_PATH", '"/usr/lib/x86_64-linux-gnu:/opt/opencv/current/lib:"')
-            env.insert("LC_ALL","C")
-            env.remove("LANGUAGE")
-            trackP.setProcessEnvironment(env)
-            trackP.setWorkingDirectory(trial_path)
-            trackP.setStandardErrorFile(trial_path + "/stderr.log")
-            trackP.setStandardOutputFile(trial_path + "/stdout.log")
-            trackP.start(LRVTRACK,[
-                                    '-x', # offline background computation
-                                    '-z', # dish size set below
-                                    str(dish_size)] +
-                                    blist + clist + glist +
-                                    ['--min-obj-size', #min size of blob
-                                    str(min_size),
-                                    '--max-obj-size', #max size of blob
-                                    str(5000)] +
-                                    # ROI if specified
-                                    ROIlist +
-                                    collisionlist + [
-                                    '-p', #run multiprocessor
-                                    '--thread-count', # number of threads...
-                                    '9',
-                                    '-o',  # generate output
-                                    '-v',
-                                    '16',
-                                    '-d',
-                                    '13',
-                                    '-w',
-                                    '0.04',
-                                    '-u',
-                                    '-t',
-                                    '--metadata-file',
-                                    '-i',
-                                    video_path]
-                                    )
-            trackP.waitForFinished(-1)
-            exitCode = trackP.exitCode()
+            print("start tracking")
+            print(trial_path)
+            command = ' '.join([LRVTRACK,
+                        '-x', # offline background computation
+                        '-z', # dish size set below
+                        str(dish_size)] +
+                        blist + clist + glist +
+                        ['--min-obj-size', #min size of blob
+                        str(min_size),
+                        '--max-obj-size', #max size of blob
+                        str(5000)] +
+                        # ROI if specified
+                        ROIlist +
+                        collisionlist + [
+                        '-p', #run multiprocessor
+                        '--thread-count', # number of threads...
+                        '9',
+                        '-o',  # generate output
+                        '-v',
+                        '16',
+                        '-d',
+                        '13',
+                        '-w',
+                        '0.04',
+                        '-u',
+                        '-t',
+                        '--metadata-file',
+                        '-i',
+                        video_path]
+                        )
+
+            with open(trial_path+"/stdout.log","wb") as out, open(trial_path+"/stderr.log","wb") as err:
+                process = subprocess.Popen(command, 
+                                            shell=True,
+                                            cwd = trial_path,
+                                            stderr=err,
+                                            stdout=out)
+                exitCode = process.wait()
+            #trackP.waitForFinished(-1)
+            #exitCode = trackP.exitCode()
             print('ExitCode: ' + str(exitCode))
             #ctid = self.currentTrackingID
             output_path = self.outputPath
@@ -154,6 +157,8 @@ class trackWorker(QtCore.QObject):
 
                 vidsAndLogsPath = output_path + '/' + subfolder + '/vidAndLogs'
                 real_output = output_path + '/' + subfolder
+                print(vidsAndLogsPath)
+                print(real_output)
                 # Copy files to output folder
                 try:
                     #print("Metadata:")
@@ -163,6 +168,8 @@ class trackWorker(QtCore.QObject):
                     ce = subprocess.call(['mv ' + trial_path + '/stderr.log ' + vidsAndLogsPath],shell=True)
                     cd = subprocess.call(['mv ' + trial_path + '/*-data/* ' + real_output],shell=True)
                     cv = subprocess.call(['mv ' + trial_path + '/2*.mp4 '  + vidsAndLogsPath],shell=True)
+                    
+                    cc = subprocess.call(['bash createCollisionsCSVinExperiment.sh ' + vidsAndLogsPath + '/stdout.log'],shell=True)
                 except:
                     print("Error: Some of the files were not found")
                     return 1
@@ -240,6 +247,9 @@ class trackApp(QMainWindow, Ui_MainWindow):
         self.ROI_r = 0
         self.ROI_x = 0
         self.ROI_y = 0
+        self.resultsTabWidget.setCurrentIndex(1)
+        #time.sleep(1)
+        #self.resultsTabWidget.setCurrentIndex(0)
 
     def updateFrame(self, int):
         if not self.ROIcheckbox.checkState():
@@ -250,6 +260,8 @@ class trackApp(QMainWindow, Ui_MainWindow):
             self.ROI_x = self.ROIXspinbox.value()
             self.ROI_y = self.ROIYspinbox.value()
             self.ROI_r = self.ROIRspinbox.value()
+        self.showFrame()
+        self.imgProcChange()
         self.showFrame()
 
     def selectAll(self):
@@ -343,7 +355,7 @@ class trackApp(QMainWindow, Ui_MainWindow):
             self.outputPathLineEdit.setText(path + "/Tracked_" + str(datetime.date.today()))
             exp_search = FileList()
             exp_search.findall(path)
-            exp_search.include_pattern("experiment.mp4", anchor=0)
+            exp_search.include_pattern("*.mp4", anchor=0)
             self.experiment_videos = exp_search.files
             self.loadVideos()
         except:
@@ -359,7 +371,7 @@ class trackApp(QMainWindow, Ui_MainWindow):
             o = cv2.addWeighted(o,0,o,c,b,o)
         if g!=1.0:
             o = np.float32(o)
-            o = o/255.0
+            #o = o/255.0
             np.clip(o, 0.0, 1.0, out=o)
             cv2.pow(o,g,o)
             o = o * 255.0
@@ -372,7 +384,7 @@ class trackApp(QMainWindow, Ui_MainWindow):
         self.showFrame()
 
     def imgProcChange(self):
-        if self.cv_image is None:
+        if self.cv_frame is None:
             self.frameShowLbl.clear()
             self.frameShowLbl.repaint()
         else:
