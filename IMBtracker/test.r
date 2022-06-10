@@ -140,9 +140,9 @@ for(i in names)
      tab = read.csv(file=i, header=F, sep=",")
      tab["csv_name"] <- basename(i)
      tab <- tab[,-c(2:68,72)]
-     csvnumber <- sapply(strsplit(tab[,11], split='.', fixed=TRUE), function(x) (x[1]))
-     csvnumber <- strtoi(csvnumber)
-     tab["csv_number"] <- csvnumber
+     #csvnumber <- sapply(strsplit(tab[,11], split='.', fixed=TRUE), function(x) (x[1]))
+     #csvnumber <- strtoi(csvnumber)
+     #tab["csv_number"] <- csvnumber
      colnames(tab) <- c("Frame","Centroid_Y","Centroid_X","Orientation","Area",
 				"Grey_Sum","Length","Width","Perimeter","Indicator","csv_Name","csv_Number")
      alldata <- rbind(alldata, tab)
@@ -162,7 +162,8 @@ collisions <- read.csv("collisions.csv", header=F, sep=",")
 colnames(collisions) <- c("csv_Number", "New1", "New2", "New3", "Origin", "Bundle")
 collisions$n_frames <- NULL	
 collisions <- collisions[order(collisions$csv_Number, collisions$New1, collisions$New2),]
-
+print(collisions)
+if(nrow(collisions)>0){
 for(i in nrow(collisions):2)
   {
      if(collisions$csv_Number[i]==collisions$csv_Number[i-1])
@@ -197,6 +198,8 @@ for(i in 1:nrow(collisions))
           collisions$End[i]=max(subset(alldata,alldata$csv_Number==i)$Frame)     
        }
   }
+}
+
 
 
 ######################################################
@@ -234,7 +237,8 @@ expl.var <- rbind(expl.var,(needed.pca$sdev)^2/length(needed.pca$sdev))
 
 
 #Plotting stuff... 
-if(T){
+if(F){
+print(dev.cur())
 jpeg(file="saving_plot1.jpeg")
 boxplot(cbind(expl.var,rep(1,nrow(eigenvalues))), xaxt="n", yaxt="n", ylim=c(0,1), horizontal=T, border=c("black","blue","darkgreen","brown","white"),at=c(1,1,1,1,.8), names=F)
 mtext("eigenvalues",side=1, line=2.25) 
@@ -296,9 +300,10 @@ Shapiro_P <- na.omit(Shapiro_P)
 ######################################################
 #no cross testing
 setwd(box.path)
-
+print("2x2 collisions")
 #####Wilcoxon Mann-Whitney Rank Sum Test#####	
 Wilcox_P <- array(NA, c(0,8))				#only 2-bundle collisions with >=10 frames per larva
+if(nrow(collisions)>0){
 for(i in collisions$csv_Number)
   {
      laufdf <- rbind(subset(collisions,collisions$New1==i),subset(collisions,collisions$csv_Number==i),
@@ -348,6 +353,9 @@ for(i in collisions$csv_Number)
 	    }
 	 }
   }
+
+}
+
 Wilcox_P <- as.data.frame(Wilcox_P)
 
 wilcox.p <- Wilcox_P	
@@ -359,9 +367,12 @@ wilcox.p$assignm2 <- rep(NA, nrow(wilcox.p))
 
 colnames(wilcox.p) <- c("In1", "In2", "Out1", "Out2", "p.In1.Out1", "p.In1.Out2", "p.In2.Out1", "p.In2.Out2", 
 				"detected", "assignm1", "assignm2")
+print(wilcox.p)
 
-if(nrow(wilcox.p)!=0)
+if(nrow(wilcox.p)>0)
 {
+  print(wilcox.p)
+
 #detection:	1 -> pattern ok (2 highest values are I1O1/I2O2 or I1O2/I2O1)
 #		0 -> pattern not correct or values are to close to each other
 for(i in 1:nrow(wilcox.p))
@@ -470,7 +481,7 @@ for(i in 1:nrow(wilcox.p))
           collisions$Start[wilcox.p$Out2[i]] <- subset(collisions, collisions$csv_Number==wilcox.p$In1[i])$Start
        }
   }
-}
+
 number.detected <- rbind(number.detected, sum(wilcox.p$detected))
 
 #setwd(log.path)
@@ -487,7 +498,7 @@ if(FORCING==1){
   n_assignments <- n_assignments + 2*nrow(subset(wilcox.p, wilcox.p$detected=="no"))
 		 }
 
-
+}
 #################################################
 ### 3x3 collisions ##############################
 #################################################
@@ -1057,12 +1068,12 @@ n_5x1_assign <- n_5x1_assign + nrow(subset(assigntable,assigntable$incoming==5))
 #####################################################
 ##### ALL ASSIGNMENTS ###############################
 #####################################################
+print("write assignments")
 ordered <- order(assignments$Outgoing)
 assignments <- assignments[ordered,]
-
-setwd(log.path)
+if(nrow(assignments)>0){
 write.csv(assignments, row.names =FALSE, "assignments.csv")
-
+print("merge tracks")
 #####################################################
 ##### MERGE TRACKS ##################################
 #####################################################
@@ -1082,6 +1093,10 @@ for(i in 1:nrow(assignments)){
 
 	write.table(NEW, row.names=FALSE, col.names=FALSE, sep=",", paste(assignments$Outgoing[i], ".csv", sep=""))
 }
+
+
+}
+
 
 
 if(FALSE){
@@ -1132,8 +1147,9 @@ for(i in collisions$csv_Number)
 
 #number of all '1+1 -> 2 -> 1+1'-collisions
 gesamt <- gesamt + n.two.bundle - n.two.to.three - n.two.at.start
-}
+print(gesamt)
 
+}
 
 # }	
 #####END OF LOOP THROUGH EVERY BOX#####
