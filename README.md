@@ -16,7 +16,6 @@ git clone https://github.com/mthane/IMB
 3. Install the Tracking Software
 
 ```
-cd IMB
-cd IMBtracker
+cd IMB/IMBtracker
 yes | bash setup.sh
 ```
