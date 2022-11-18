@@ -2,9 +2,7 @@ sudo apt update
 sudo apt install python3
 sudo apt --only-upgrade install python3
 sudo apt install python3-pip
-sudo apt-get install libxkbcommon-x11-0
-sudo apt-get install libx11-xcb1
-sudo apt install  DEBIAN_FRONTEND=noninteractive liblpsolve55-dev libalglib-dev libboost-all-dev libopencv-dev build-essential cmake git unzip
+sudo apt install  DEBIAN_FRONTEND=noninteractive libxkbcommon-x11-0 libx11-xcb1 liblpsolve55-dev libalglib-dev libboost-all-dev libopencv-dev build-essential cmake git unzip
 bash IMBtracker_cpp/setup.sh
 
 sudo apt install python-setuptools-scm
