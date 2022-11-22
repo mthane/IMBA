@@ -1,23 +1,33 @@
-# IMB - Individual Maggot Behavior Analysis
+# IMBA - Individual Maggot Behavior Analysis
 
-## Installation
-### Windows
+## Installation (Ubuntu-18.04)
+### Installation of Ubuntu on Windows
 
 1. Open command prompt and install WSL2 with Ubuntu 18.04 using:
 ```
 wsl --install -d Ubuntu-18.04
 ```
-This will open another command prompt with the Ubuntu-18.04 system. Here do the following:
 
-2. Install git and clone this repository:
+This will open another command prompt with the Ubuntu-18.04 system. Here do the following:
+1. Enter desired user name and password...
+3. Install git and clone this repository:
 ```
 sudo apt update
 sudo apt install git
 git clone https://github.com/mthane/IMB
 ```
-3. Install the Tracking Software
+### Installation IMBAtracker
 
 ```
 cd IMB/IMBtracker
+bash setup.sh
+```
+
+### Installation IMBAvisualizer
+
+3. Install the Tracking Software
+
+```
+cd IMB/IMBvisualizer
 bash setup.sh
 ```
