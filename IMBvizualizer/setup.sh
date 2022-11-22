@@ -1,3 +1,7 @@
 sudo apt install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev
+sudo apt-get install r-cran-devtools
 sudo -i R
-install.packages('devtools')
+library(devtools)
+install()
+library(illav)
+run_app()
