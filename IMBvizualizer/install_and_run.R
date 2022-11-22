@@ -2,8 +2,8 @@
 
 source("create_variables.R")
 devtools::install(quick=TRUE)
-#devtools::build_manual()
+1#devtools::build_manual()
 library(illav)
+
 run_app()
-
-
+devtools::install_github("https://github.com/mthane/IMB",subdir = "IMBvisualizer")
