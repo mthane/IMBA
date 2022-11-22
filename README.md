@@ -30,7 +30,4 @@ bash setup.sh
 ```
 cd IMB/IMBvisualizer
 bash setup.sh
-install.packages("devtools")
-library(devtools)
-devtools::install()
 ```
