@@ -7,6 +7,8 @@
 ```
 wsl --install -d Ubuntu-18.04
 ```
+This will open another command prompt with the Ubuntu-18.04 system. Here do the following:
+
 2. Install git and clone this repository:
 ```
 sudo apt update
