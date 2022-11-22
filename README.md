@@ -17,5 +17,5 @@ git clone https://github.com/mthane/IMB
 
 ```
 cd IMB/IMBtracker
-yes | bash setup.sh
+bash setup.sh
 ```
