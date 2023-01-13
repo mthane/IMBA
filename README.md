@@ -14,12 +14,12 @@ This will open another command prompt with the Ubuntu-18.04 system. Here do the 
 ```
 sudo apt update
 sudo apt install git
-git clone https://github.com/mthane/IMB
+git clone https://github.com/mthane/IMBA
 ```
 ### Installation IMBAtracker
 
 ```
-cd IMB/IMBtracker
+cd IMB/IMBAtracker
 bash setup.sh
 ```
 
@@ -28,6 +28,6 @@ bash setup.sh
 3. Install the Tracking Software
 
 ```
-cd IMB/IMBvisualizer
+cd IMB/IMBAvisualizer
 bash setup.sh
 ```
