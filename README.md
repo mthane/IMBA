@@ -19,7 +19,7 @@ git clone https://github.com/mthane/IMBA
 ### Installation IMBAtracker
 
 ```
-cd IMB/IMBAtracker
+cd IMBA/IMBAtracker
 bash setup.sh
 ```
 
@@ -28,6 +28,6 @@ bash setup.sh
 3. Install the Tracking Software
 
 ```
-cd IMB/IMBAvisualizer
+cd IMBA/IMBAvisualizer
 bash setup.sh
 ```
