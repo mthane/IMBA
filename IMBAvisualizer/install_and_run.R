@@ -6,4 +6,4 @@ devtools::install(quick=TRUE)
 library(illav)
 
 run_app()
-devtools::install_github("https://github.com/mthane/IMB",subdir = "IMBvisualizer")
+devtools::install_github("https://github.com/mthane/IMBA",subdir = "IMBAvisualizer")
