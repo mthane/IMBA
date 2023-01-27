@@ -7,6 +7,7 @@ sudo apt update && sudo apt upgrade
 sudo apt install r-base
 
 sudo -i R
+install.packages("devtools")
 library(devtools)
 install()
 library(illav)
