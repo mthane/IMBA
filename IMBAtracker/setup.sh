@@ -9,7 +9,7 @@ cd ..
 sudo apt install python-setuptools-scm
 pip3 install --upgrade setuptools pip
 pip3 install scikit-build
-pip3 install opencv-python-headless
+pip3 install opencv-python-headless<4.3
 
 sudo apt-get install python3-pyqt5  
 sudo apt-get install pyqt5-dev-tools
