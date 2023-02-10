@@ -2,7 +2,7 @@
 
 source("create_variables.R")
 devtools::install(quick=TRUE)
-1#devtools::build_manual()
+#devtools::build_manual()
 library(illav)
 
 run_app()

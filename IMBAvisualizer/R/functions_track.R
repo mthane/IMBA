@@ -975,6 +975,8 @@ process_track <- function(track,
     mutate(abs_bending_angle = abs(bending_angle))%>%
     mutate(bearing_angle = calculate_bearing_angle(.),
            heading_angle = calculate_heading_angle(.)) %>%
+    mutate(abs_bearing_angle = abs(bearing_angle),
+           abs_heading_angle = abs(heading_angle)) %>%
     mutate(
       distance_to_odor =
         sqrt((spinepoint_x_6_conv - odor_a_x_rot) ^ 2 +

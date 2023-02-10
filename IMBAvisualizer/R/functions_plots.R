@@ -182,18 +182,18 @@ plot_timeseries <- function(track,
     
     #add vlines for switching point
     
-    if(nrow(switching_point_positive)>0){
-      p <-  p+ geom_vline(data=switching_point_positive,
-                          aes(group= id_gc,
-                              xintercept = idx))
-    }
-    if(nrow(switching_point_negative)>0){
-      p <-  p+ geom_vline(data=switching_point_negative,
-                          aes(group= id_gc,
-                              xintercept = idx),
-                          color="blue",
-                          linetype="dashed")
-    }
+    # if(nrow(switching_point_positive)>0){
+    #   p <-  p+ geom_vline(data=switching_point_positive,
+    #                       aes(group= id_gc,
+    #                           xintercept = idx))
+    # }
+    # if(nrow(switching_point_negative)>0){
+    #   p <-  p+ geom_vline(data=switching_point_negative,
+    #                       aes(group= id_gc,
+    #                           xintercept = idx),
+    #                       color="blue",
+    #                       linetype="dashed")
+    # }
     
   }
   
@@ -212,7 +212,12 @@ plot_timeseries <- function(track,
       yintercept = 45,
       linetype = "dotted",
       color = "blue",
-      alpha = 0.3)
+      alpha = 0.3) + 
+      geom_hline(
+        yintercept =-45,
+        linetype = "dotted",
+        color = "blue",
+        alpha = 0.3)
   }
   
   if(use_limits){

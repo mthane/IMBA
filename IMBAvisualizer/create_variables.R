@@ -51,13 +51,20 @@ RUN_VARIABLES_SINGLE =
   spread(name, variable)%>%
   as.list()
 
+PREF_VARIABLES_SINGLE <-
+  SINGLE_VARTABLE %>%
+  filter(category=="PREF")%>%
+  select("variable","name")%>%
+  spread(name, variable)%>%
+  as.list()
+
 
 SINGLE_VARIABLES =
   list(`TS-Variables` = TS_VARIABLES_SINGLE,
        `HC-Variables` = HC_VARIABLES_SINGLE,
-       `Run-Variables` = RUN_VARIABLES_SINGLE
+       `Run-Variables` = RUN_VARIABLES_SINGLE,
+       `Pref-Variables` = PREF_VARIABLES_SINGLE
   )
-
 
 ##### BINNING #####
 
