@@ -1,5 +1,5 @@
-Package: illav
-Title: illav
+Package: imba
+Title: imba
 Version: 0.0.0.9000
 Authors@R: person('AUTHOR_FIRST', 'AUTHOR_LAST', email = 'AUTHOR@MAIL.COM', role = c('cre', 'aut'))
 Description: PKG_DESC.

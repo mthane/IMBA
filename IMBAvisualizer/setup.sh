@@ -10,5 +10,5 @@ sudo -i R
 install.packages("devtools")
 library(devtools)
 install()
-library(illav)
-run_app()
+library(imba)
+imba::run_app()

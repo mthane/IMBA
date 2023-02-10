@@ -3,5 +3,5 @@
 source("create_variables.R")
 devtools::install(quick=TRUE)
 #devtools::build_manual()
-library(illav)
-illav::run_app()
+library(imba)
+imba::run_app()
