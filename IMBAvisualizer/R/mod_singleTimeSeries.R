@@ -197,8 +197,8 @@ mod_singleTimeSeries_server <- function(id, track, upload) {
                        #size=1,
                        data=data%>%filter(HC_LR!=0)
                      )+
-                     scale_colour_manual(values =c("red",
-                                                   "green"),
+                     scale_colour_manual(values =c("green",
+                                                   "red"),
                                          labels =c("left","right"),
                                          breaks = c("-1", "1")
                      )+
