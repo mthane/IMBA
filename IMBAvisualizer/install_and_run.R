@@ -4,6 +4,4 @@ source("create_variables.R")
 devtools::install(quick=TRUE)
 #devtools::build_manual()
 library(illav)
-
-run_app()
-devtools::install_github("https://github.com/mthane/IMBA",subdir = "IMBAvisualizer")
+illav::run_app()

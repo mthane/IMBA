@@ -8,6 +8,8 @@
 #' @import shinyFiles
 #' 
 #' @noRd
+#' 
+#' 
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
@@ -16,6 +18,8 @@ app_ui <- function(request) {
     
     
     fluidPage(
+      h2("IMBAvisualizer"),
+      hr(),
       #dashboardHeader(title = "ILLAV"),
       
       # dashboardSidebar(

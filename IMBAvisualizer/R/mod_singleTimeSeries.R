@@ -35,7 +35,6 @@ mod_singleTimeSeries_ui <- function(id, label = "Track selection") {
                    ),
                    checkboxInput(ns("density"),"Use Density Plot"),
                    
-                   checkboxInput(ns("use_plotly"), "Interactive",value = F)
                  ),
                  fluidRow(
                    column(6,
