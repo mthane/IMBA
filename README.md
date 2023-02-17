@@ -25,7 +25,7 @@ bash setup.sh
 
 ### Installation IMBAvisualizer
 
-Install Rtools form https://cran.r-project.org/bin/windows/Rtools/
+Install Rtools 4.2 form https://cran.r-project.org/bin/windows/Rtools/
 ```
 cd IMBA/IMBAvisualizer
 bash setup.sh
