@@ -25,8 +25,7 @@ bash setup.sh
 
 ### Installation IMBAvisualizer
 
-3. Install the Tracking Software
-
+Install Rtools form https://cran.r-project.org/bin/windows/Rtools/
 ```
 cd IMBA/IMBAvisualizer
 bash setup.sh
