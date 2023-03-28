@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from distutils.filelist import FileList
 
-LRVTRACK = './IMBtracker_cpp/lrvTrack'
+LRVTRACK = './IMBAtracker/lrvTrack.AppImage'
 LRVTRACK = os.path.abspath(LRVTRACK)
 TMPDIR = '/tmp'
 #from TrackUI import Ui_TrackExperiment
