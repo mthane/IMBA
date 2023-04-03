@@ -58,7 +58,6 @@ PREF_VARIABLES_SINGLE <-
   spread(name, variable)%>%
   as.list()
 
-
 SINGLE_VARIABLES =
   list(`TS-Variables` = TS_VARIABLES_SINGLE,
        `HC-Variables` = HC_VARIABLES_SINGLE,
