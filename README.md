@@ -23,6 +23,7 @@ cd IMBA/IMBAtracker
 bash setup.sh
 ```
 ### Run IMBAtracker via AppImage
+
 ```
 sudo apt-get install fuse libfuse2
 sudo apt-get install libfreetype6
@@ -32,6 +33,7 @@ sudo apt-get install libharfbuzz0b
 sudo apt-get install libfontconfig1
 sudo apt-get install libthai0
 ```
+
 ### Installation IMBAvisualizer
 
 Install Rtools 4.2 form https://cran.r-project.org/bin/windows/Rtools/
