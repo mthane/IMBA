@@ -22,6 +22,17 @@ git clone https://github.com/mthane/IMBA
 cd IMBA/IMBAtracker
 bash setup.sh
 ```
+### Run IMBAtracker via AppImage
+
+```
+sudo apt-get install fuse libfuse2
+sudo apt-get install libfreetype6
+sudo apt-get install libsm6
+sudo apt-get install libgl1
+sudo apt-get install libharfbuzz0b
+sudo apt-get install libfontconfig1
+sudo apt-get install libthai0
+```
 
 ### Installation IMBAvisualizer
 
