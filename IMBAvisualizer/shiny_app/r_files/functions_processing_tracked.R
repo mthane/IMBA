@@ -152,8 +152,13 @@ create_dataset_from_dir <-
           "vidAndLogs/metadata.txt"
         ),
         collapse = "/")
+      print(meta_dir)
       
-      if ((file.info(meta_dir)$size == 0)) {
+      file_found = file.info(meta_dir)$size
+      if(is.na(file_found)){
+        file_found=0
+      }
+      if (file_found == 0) {
         odor_location = NA
       } else{
         metadata <- read.delim(meta_dir)
