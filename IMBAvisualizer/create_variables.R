@@ -89,9 +89,11 @@ HEATMAP_VARIABLES =
 #####  SUMMARY #####
 SUMMARY_VARTABLE = read.csv("variables/summaryVariables.csv", encoding="UTF-8")%>%
   filter(variable!="")
+View(SUMMARY_VARTABLE)
 TS_VARIABLES <-  list_names(SUMMARY_VARTABLE,"TS")
 HC_VARIABLES <-  list_names(SUMMARY_VARTABLE,"HC")
 RUN_VARIABLES <-  list_names(SUMMARY_VARTABLE,"RUN")
+print(RUN_VARIABLES)
 PREF_VARIABLES <-  list_names(SUMMARY_VARTABLE,"PREF")
 TRACK_VARIABLES <-  list_names(SUMMARY_VARTABLE,"TRACK")
 
