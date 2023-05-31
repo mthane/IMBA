@@ -3,7 +3,7 @@ area_mean,Larva size,pixel,A,TRACK,The area of a larva in pixel, negative values
 area_var,Larva size variance,,A,TRACK,The area of a larva in pixel,
 grey_mean,Average grey value,,A,TRACK,The average grey value of all pixels of a larva,
 grey_var,Grey value variance,,A,TRACK,The variance of the grey value of all pixels of a larva,
-length_mean,Body length,mm (#MT),A,TRACK,The length of a larva along the spine,
+length_mean,Body length,mm ,A,TRACK,The length of a larva along the spine,
 length_var,Body length variance,,A,TRACK,The length of a larva along the spine,
 width_mean,Width,pixel,A,TRACK,The width of a larva at its widest spot.,
 width_var,Width variance,,A,TRACK,The width of a larva at its widest spot.,
@@ -20,7 +20,7 @@ head_vector_angular_speed_mean,HV angular speed,°/s,B,TS,"The angular speed of 
 head_vector_angular_speed_var,HV angular speed variance,,B,TS,"The angular speed of the head vector (HV). Positive values indicate movement of the head to the right, negative values to the left.", negative values to the left.
 abs_head_vector_angular_speed_mean,Absolute HV angular speed,°/s,B,TS,The absolute angular speed of the head vector (HV). ,
 abs_head_vector_angular_speed_var,Absolute HV angular speed variance,,B,TS,The absolute angular speed variance of the head vector (HV).,
-head_vector_angular_acc_mean,HV angular acceleration,°/s^2 (#MT),B,TS,"The angular acceleration of the head vector (HV). Positive values indicate movement of the head to the right, negative values to the left.", negative values to the left.
+head_vector_angular_acc_mean,HV angular acceleration,°/s^2 ,B,TS,"The angular acceleration of the head vector (HV). Positive values indicate movement of the head to the right, negative values to the left.", negative values to the left.
 head_vector_angular_acc_var,HV angular acceleration variance,,B,TS,"The angular acceleration of the head vector (HV). Positive values indicate movement of the head to the right, negative values to the left.", negative values to the left.
 head_vel_forward_mean,Head forward velocity,mm/s,B,TS,"The velocity of the larva's head point in forward direction, that is, in direction of the head vector. Any lateral speed component is ignored.", negative values to the left.
 head_vel_forward_var,Head forward velocity variance,,B,TS,"The velocity of the larva's head point in forward direction, that is, in direction of the head vector. Any lateral speed component is ignored.", that is
@@ -30,7 +30,7 @@ tail_vector_angular_speed_mean,TV angular speed,°/s,B,TS,"The angular speed of 
 tail_vector_angular_speed_var,TV angular speed variance,,B,TS,"The angular speed of the tail vector (TV). Positive values indicate movement to the right, negative values to the left.", negative values to the left.
 abs_tail_vector_angular_speed_mean,Absolute TV angular speed,°/s,B,TS,The absolute angular speed of the tail vector (TV). ,
 abs_tail_vector_angular_speed_var,Absolute TV angular speed variance,,B,TS,The absolute angular speed variance of the tail vector (TV).,
-tail_vector_angular_acc_mean,TV angular acceleration,°/s^2 (#MT),B,TS,"The angular acceleartion of the tail vector (TV). Positive values indicate movement to the right, negative values to the left.", negative values to the left.
+tail_vector_angular_acc_mean,TV angular acceleration,°/s^2 ,B,TS,"The angular acceleartion of the tail vector (TV). Positive values indicate movement to the right, negative values to the left.", negative values to the left.
 tail_vector_angular_acc_var,TV angular acceleration variance,,B,TS,"The angular acceleartion of the tail vector (TV). Positive values indicate movement to the right, negative values to the left.", negative values to the left.
 tail_vel_forward_mean,Tail forward velocity,mm/s,B,TS,"The velocity of the larva's tail point in forward direction, that is, in direction of the tail vector. Any lateral speed component is ignored.", negative values to the left.
 tail_vel_forward_var,Tail forward velocity variance,,B,TS,"The velocity of the larva's tail point in forward direction, that is, in direction of the tail vector. Any lateral speed component is ignored.", that is
@@ -58,10 +58,10 @@ Abs_IS_angle_mean,Absolute IS angle,°,C,RUN,The inter-step (IS) angle indicates
 Abs_IS_angle_var,Absolute IS angle variance,,C,RUN,The inter-step (IS) angle indicates how much the orientation of the animal changes within one cycle of peristaltic forward movement. It is defined as the angle between a larva's head vector at one step minus the head vector at the previous step. A step is defined as the local maximum of the tail forward velocity during runs.,
 IS_interval_mean,IS interval,s,C,RUN,,
 IS_interval_var,IS interval variance,,C,RUN,The inter-step (IS) interval measures the time between two steps. A step is defined as the local maximum of the tail forward velocity during runs.,
-IS_distance_mean,IS distance,mm,C,RUN,The inter-step (IS) distance measures the distance of the larva's #MT midpoint between two steps. A step is defined as the local maximum of the tail forward velocity during runs.,
-IS_distance_var,IS distance variance,,C,RUN,The inter-step (IS) distance measures the distance of the larva's #MT midpoint between two steps. A step is defined as the local maximum of the tail forward velocity during runs.,
-IS_distance_bl_mean,IS distance (body length),bl,C,RUN,The inter-step (IS) distance measures the distance of the larva's #MT midpoint between two steps in body lengths. A step is defined as the local maximum of the tail forward velocity during runs.,
-IS_distance_bl_var,IS distance (bl) variance,,C,RUN,The inter-step (IS) distance measures the distance of the larva's #MT midpoint between two steps in body lengths. A step is defined as the local maximum of the tail forward velocity during runs.,
+IS_distance_mean,IS distance,mm,C,RUN,The inter-step (IS) distance measures the distance of the larva's midpoint between two steps. A step is defined as the local maximum of the tail forward velocity during runs.,
+IS_distance_var,IS distance variance,,C,RUN,The inter-step (IS) distance measures the distance of the larva's midpoint between two steps. A step is defined as the local maximum of the tail forward velocity during runs.,
+IS_distance_bl_mean,IS distance (body length),bl,C,RUN,The inter-step (IS) distance measures the distance of the larva's midpoint between two steps in body lengths. A step is defined as the local maximum of the tail forward velocity during runs.,
+IS_distance_bl_var,IS distance (bl) variance,,C,RUN,The inter-step (IS) distance measures the distance of the larva's midpoint between two steps in body lengths. A step is defined as the local maximum of the tail forward velocity during runs.,
 run_speed_bl_mean,Run speed (body length),bl/s,C,RUN,"The speed of a larva's midpoint, measured only during runs in body lengths.", independent of direction
 run_speed_bl_var,Run speed (body length) variance,,C,RUN,"The speed of a larva's midpoint, measured only during runs in body lengths.", measured only during runs in body lengths.
 step_extr_mean,Number of Extrema,,C,RUN,The number of extrem points of tail acceleration forward,
