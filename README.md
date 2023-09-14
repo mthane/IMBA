@@ -21,6 +21,7 @@ sudo git clone https://github.com/mthane/IMBA
 ```
 cd IMBA/IMBAtracker
 bash setup.sh
+pip install PyQt5
 ```
 ### Run IMBAtracker via AppImage
 
