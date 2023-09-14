@@ -5,7 +5,7 @@
 
 1. Open command prompt and install WSL2 with Ubuntu 18.04 using:
 ```
-wsl --install -d Ubuntu-18.04
+wsl --install -d Ubuntu-20.04
 ```
 
 This will open another command prompt with the Ubuntu-18.04 system. Here do the following:
@@ -14,7 +14,7 @@ This will open another command prompt with the Ubuntu-18.04 system. Here do the 
 ```
 sudo apt update
 sudo apt install git
-git clone https://github.com/mthane/IMBA
+sudo git clone https://github.com/mthane/IMBA
 ```
 ### Installation IMBAtracker
 
