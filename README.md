@@ -1,6 +1,5 @@
 # IMBA: Individual Maggot Behavior Analyzer
 
-# IMBA: Individual Maggot Behavior Analyzer
 
 ## Introduction <a name="introduction"></a>
 
