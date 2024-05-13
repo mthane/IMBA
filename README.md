@@ -1,4 +1,19 @@
-# IMBA - Individual Maggot Behavior Analysis
+# IMBA: Individual Maggot Behavior Analyzer
+
+## Introduction
+
+Neuronally orchestrated muscular movement and locomotion are fundamental aspects of multicellular animals. The larva of the fruit fly Drosophila melanogaster provides a unique opportunity to study these processes due to its simple brain and genetic accessibility. However, traditional methods of studying larval locomotion often aggregate measurements across animals or test animals individually, limiting our ability to understand inter- and intra-individual variability in locomotion and its neurogenetic determinants.
+
+To address this gap, we introduce the Individual Maggot Behavior Analyzer (IMBA), a software tool designed for analyzing the behavior of individual larvae within groups. IMBA enables researchers to reliably resolve individual larval identities across collisions, providing unprecedented insights into locomotion variability and its underlying genetic and neural mechanisms.
+
+In this README, we provide an overview of IMBA's features, installation instructions, usage guidelines, and examples of its application in studying larval behavior in various biomedical research contexts. With IMBA, researchers can obtain a rich understanding of individual larval behavior, paving the way for deeper insights into neurogenetic pathways governing locomotion and its modulation.
+
+## Table of Contents
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [Examples](#examples)
+4. [Contributing](#contributing)
+5. [License](#license)
 
 ## Installation (Ubuntu-18.04)
 ### Installation of Ubuntu on Windows
@@ -21,18 +36,6 @@ sudo git clone https://github.com/mthane/IMBA
 ```
 cd IMBA/IMBAtracker
 bash setup.sh
-pip install PyQt5
-```
-### Run IMBAtracker via AppImage
-
-```
-sudo apt-get install fuse libfuse2
-sudo apt-get install libfreetype6
-sudo apt-get install libsm6
-sudo apt-get install libgl1
-sudo apt-get install libharfbuzz0b
-sudo apt-get install libfontconfig1
-sudo apt-get install libthai0
 ```
 
 ### Installation IMBAvisualizer
