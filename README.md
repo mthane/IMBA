@@ -1,5 +1,7 @@
 # IMBA: Individual Maggot Behavior Analyzer
 
+# IMBA: Individual Maggot Behavior Analyzer
+
 ## Introduction <a name="introduction"></a>
 
 Neuronally orchestrated muscular movement and locomotion are fundamental aspects of multicellular animals. The larva of the fruit fly Drosophila melanogaster provides a unique opportunity to study these processes due to its simple brain and genetic accessibility. However, traditional methods of studying larval locomotion often aggregate measurements across animals or test animals individually, limiting our ability to understand inter- and intra-individual variability in locomotion and its neurogenetic determinants.
@@ -10,12 +12,15 @@ In this README, we provide an overview of IMBA's features, installation instruct
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [Usage](#usage)
-4. [Examples](#examples)
+2. [IMBAtracker](#imbatracker)
+3. [IMBAvisualizer](#imbavisualizer)
 
+---
 
-## Installation <a name="installation"></a>
+# IMBAtracker
+
+## Installation <a name="installation-tracker"></a>
+
 If you are using Ubuntu you can skip step 1 and 2.
 1. Open command prompt and install WSL2 with Ubuntu 18.04 using:
 ```
