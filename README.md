@@ -17,9 +17,12 @@ In this README, we provide an overview of IMBA's features, installation instruct
 ---
 
 # IMBAtracker <a name="imbatracker"></a>
+The IMBAtracker consists of mainly two parts. The first part is the Tracking software that is written in c++. It is developed with the help of the OpenCV library and CVblob. In order to run the tracker this c++ software has to be installed. It can be used as a standalone tool via command line.
+The second part is the GUI which is developed in Python 3.9 using the Qt library. The GUI is providing an easy use of the command line tool for tracking large amounts of data. First we will install the Tracker and then the GUI.
 
-## Installation 
+## Installation - Tracker
 
+### Cloning Repository and using WSL
 If you are using Ubuntu you can skip step 1 and 2.
 1. Open command prompt and install WSL2 with Ubuntu 18.04 using:
 ```
@@ -34,18 +37,45 @@ sudo apt update
 sudo apt install git
 sudo git clone https://github.com/mthane/IMBA
 ```
+### Docker Image
+Because of older dependencies which have caused issues we will simply use a Docker Image that encapsulates our c++ software. Next we explain how to install Docker, use our c++ Tracking Software in the command line, and give some examples. Docker is a platform that allows you to develop, ship, and run applications in containers. Here's how to install Docker on a Windows system:
 
+#### Prerequisites
+- Windows 10 64-bit: Pro, Enterprise, or Education edition
+- Hardware virtualization support enabled in BIOS settings
+
+#### Steps
+1. **Download Docker Desktop**: Visit the [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop) webpage and download the Docker Desktop installer.
+
+2. **Install Docker Desktop**: Double-click the downloaded installer (Docker Desktop Installer.exe) to start the installation process. Follow the on-screen instructions to complete the installation.
+
+3. **Enable Hyper-V**: During installation, Docker Desktop will prompt you to enable Hyper-V and Windows Subsystem for Linux (WSL). Click "Install" to enable these features. Note that enabling Hyper-V requires a system restart.
+
+4. **Start Docker Desktop**: Once installation is complete and your system has restarted, Docker Desktop should start automatically. You'll see the Docker icon in the system tray.
+
+5. **Verify Installation**: Open a command prompt or PowerShell window and run the following command to verify that Docker is installed correctly:
+```
+docker --version
+```
+
+#### Build Docker Image
 
 ```
 cd IMBA/IMBAtracker
 bash setup.sh
 ```
 
-## Usage 
+### Usage 
 
 
-## Examples
+### Examples
 
+## Installation - GUI
+
+### Usage 
+
+
+### Examples
 
 # IMBAvisualizer <a name="imbavisualizer"></a>
 
