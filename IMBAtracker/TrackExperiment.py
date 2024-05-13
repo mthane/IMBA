@@ -12,7 +12,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from distutils.filelist import FileList
 
-LRVTRACK = './IMBAtracker/lrvTrack.AppImage'
+LRVTRACK = './lrvTrack.AppImage'
+#LRVTRACK = './IMBtracker_cpp/lrvTrack'
 LRVTRACK = os.path.abspath(LRVTRACK)
 TMPDIR = '/tmp'
 #from TrackUI import Ui_TrackExperiment
@@ -142,7 +143,7 @@ class trackWorker(QtCore.QObject):
                         '-i',
                         video_path]
                         )
-
+            print(command)
             with open(trial_path+"/stdout.log","wb") as out, open(trial_path+"/stderr.log","wb") as err:
                 process = subprocess.Popen(command, 
                                             shell=True,

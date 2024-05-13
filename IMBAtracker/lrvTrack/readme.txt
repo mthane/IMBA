@@ -1,0 +1,1 @@
+Run setup.sh, which installs all dependencies and compiles program. Tested on Debian 10.

@@ -1,0 +1,28 @@
+'-x
+                        '-z', # dish size set below
+                        str(dish_size)] +
+                        blist + clist + glist +
+                        ['--min-obj-size', #min size of blob
+                        str(min_size),
+                        '--max-obj-size', #max size of blob
+                        str(5000)] +
+                        # ROI if specified
+                        ROIlist +
+                        collisionlist + [
+                        '-p', #run multiprocessor
+                        '--thread-count', # number of threads...
+                        '9',
+                        '-o',  # generate output
+                        '-v',
+                        '16',
+                        '-d',
+                        '13',
+                        '-w',
+                        '0.04',
+                        '-u',
+                        '-t',
+                        '--metadata-file',
+                        '-i',
+                        video_path
+
+-x -z 42.5 --brightness 255 --contrast 1.0 --gamma 1.0 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t --metadata-file -i 
