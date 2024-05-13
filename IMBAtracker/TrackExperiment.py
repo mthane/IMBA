@@ -1,8 +1,6 @@
 import sys
 import cv2
 import os
-import shutil
-import time
 import numpy as np
 import datetime
 import subprocess
