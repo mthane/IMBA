@@ -17,9 +17,9 @@ In this README, we provide an overview of IMBA's features, installation instruct
 
 ---
 
-# IMBAtracker
+# IMBAtracker <a name="imbatracker"></a>
 
-## Installation <a name="installation-tracker"></a>
+## Installation 
 
 If you are using Ubuntu you can skip step 1 and 2.
 1. Open command prompt and install WSL2 with Ubuntu 18.04 using:
@@ -35,23 +35,25 @@ sudo apt update
 sudo apt install git
 sudo git clone https://github.com/mthane/IMBA
 ```
-### Installation IMBAtracker
+
 
 ```
 cd IMBA/IMBAtracker
 bash setup.sh
 ```
 
-### Installation IMBAvisualizer
+## Usage 
+
+
+## Examples
+
+
+# IMBAvisualizer <a name="imbavisualizer"></a>
 
 Install Rtools 4.2 form https://cran.r-project.org/bin/windows/Rtools/
 ```
 cd IMBA/IMBAvisualizer
 bash setup.sh
 ```
-## Usage 
-
-
-## Examples
 
 
