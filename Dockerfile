@@ -44,26 +44,3 @@ COPY . /app
 # CMD specifies the command to run your Python script when the container starts
 CMD ["python3", "IMBAtracker/TrackExperiment.py"]
 
-
-
-
-
-# RUN apt-get install -yqq --no-install-recommends --fix-missing \    
-#     python3-pyqt5 \
-#     pyqt5-dev-tools \
-#     qttools5-dev-tools
-
-# # Install OpenCV and related dependencies
-# RUN apt-get install -yqq --no-install-recommends \
-#     # libxkbcommon-x11-0 \
-#     # libx11-xcb1 \
-#     # liblpsolve55-dev \
-#     # libalglib-dev \
-#     # libboost-all-dev \
-#     libopencv-dev 
-
-# RUN apt-get update && \
-#     apt-get install -yqq --no-install-recommends \
-#     build-essential \
-#     cmake \
-#     ninja-build
