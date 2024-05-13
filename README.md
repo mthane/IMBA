@@ -14,13 +14,25 @@ This will open another command prompt with the Ubuntu-18.04 system. Here do the 
 ```
 sudo apt update
 sudo apt install git
-git clone https://github.com/mthane/IMBA
+sudo git clone https://github.com/mthane/IMBA
 ```
 ### Installation IMBAtracker
 
 ```
 cd IMBA/IMBAtracker
 bash setup.sh
+pip install PyQt5
+```
+### Run IMBAtracker via AppImage
+
+```
+sudo apt-get install fuse libfuse2
+sudo apt-get install libfreetype6
+sudo apt-get install libsm6
+sudo apt-get install libgl1
+sudo apt-get install libharfbuzz0b
+sudo apt-get install libfontconfig1
+sudo apt-get install libthai0
 ```
 
 ### Installation IMBAvisualizer

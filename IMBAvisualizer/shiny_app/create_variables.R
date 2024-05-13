@@ -15,7 +15,6 @@ list_names <- function(df,cat){
 ##### SINGLE
 SINGLE_VARTABLE = read.csv("variables/singleModeVariables.csv", encoding="UTF-8")
 
-
 SPINES <-
   unlist(str_split(paste(
     paste("spinepoint_x", seq(1, 12), sep = "_"),
@@ -67,7 +66,10 @@ SINGLE_VARIABLES =
 
 ##### BINNING #####
 
+
 BINNING_VARTABLE = read.csv("variables/binningVariables.csv")
+
+
 BINNING_VARIABLES =
   list(`TS-Variables` = list_names(BINNING_VARTABLE,"TS"),
        `HC-Variables` = list_names(BINNING_VARTABLE,"HC"),
@@ -76,6 +78,7 @@ BINNING_VARIABLES =
   )
 
 HEATMAP_VARTABLE = read.csv("variables/heatmapVariables.csv", encoding="UTF-8")
+
 HEATMAP_VARIABLES =
   list(`TS-Variables` = list_names(HEATMAP_VARTABLE,"TS"),
        `HC-Variables` = list_names(HEATMAP_VARTABLE,"HC"),
@@ -89,11 +92,10 @@ HEATMAP_VARIABLES =
 #####  SUMMARY #####
 SUMMARY_VARTABLE = read.csv("variables/summaryVariables.csv", encoding="UTF-8")%>%
   filter(variable!="")
-View(SUMMARY_VARTABLE)
+
 TS_VARIABLES <-  list_names(SUMMARY_VARTABLE,"TS")
 HC_VARIABLES <-  list_names(SUMMARY_VARTABLE,"HC")
 RUN_VARIABLES <-  list_names(SUMMARY_VARTABLE,"RUN")
-print(RUN_VARIABLES)
 PREF_VARIABLES <-  list_names(SUMMARY_VARTABLE,"PREF")
 TRACK_VARIABLES <-  list_names(SUMMARY_VARTABLE,"TRACK")
 
