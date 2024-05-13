@@ -34,5 +34,3 @@ apt-get install -y python3-pip python3-setuptools python3-pyqt5
 pip3 install --upgrade pip scikit-build opencv-contrib-python-headless 
 pip install PyQt5
 
-# CMD specifies the command to run your Python script when the container starts
-python3 TrackExperiment.py

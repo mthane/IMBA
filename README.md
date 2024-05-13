@@ -52,7 +52,7 @@ bash setup.sh
 Install Rtools 4.2 form https://cran.r-project.org/bin/windows/Rtools/
 ```
 cd IMBA/IMBAvisualizer
-bash setup.sh
+sudo bash setup.sh
 ```
 
 
