@@ -55,10 +55,10 @@ WORKDIR /app/IMBtracker_cpp/cvblob
 RUN cmake .
 RUN make
 
-RUN cd ..
+WORKDIR /app/IMBtracker_cpp
 RUN cmake .
 RUN make
 
 # CMD specifies the command to run your Python script when the container starts
-CMD ["./app/IMBtracker_cpp/lrvTrack"]
+CMD ["./lrvTrack"]
 
