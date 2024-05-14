@@ -7,12 +7,9 @@ libncurses5-dev libgdbm-dev libnss3-dev \
 libssl-dev libreadline-dev libffi-dev curl software-properties-common pyqt5-dev-tools \
 qttools5-dev-tools libxkbcommon-x11-0 \
 libx11-xcb1 \
-liblpsolve55-dev \
-libalglib-dev \
 libboost-all-dev 
 
 # Set noninteractive mode and timezone
-export DEBIAN_FRONTEND=noninteractive
 export TZ=UTC
 
 # Update package lists and install wget and tar

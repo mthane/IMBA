@@ -10,9 +10,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from distutils.filelist import FileList
 
-LRVTRACK = './lrvTrack.AppImage'
-#LRVTRACK = './IMBtracker_cpp/lrvTrack'
-LRVTRACK = os.path.abspath(LRVTRACK)
+LRVTRACK = "docker run tracker_image ./lrvTrack"
 TMPDIR = '/tmp'
 #from TrackUI import Ui_TrackExperiment
 from TrackUI import Ui_MainWindow

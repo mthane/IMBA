@@ -1,0 +1,6 @@
+[Trial Data]
+OdorA=EM
+OdorB=EM
+OdorA_Side=left
+OdorA_Rewarded=YES
+FPS=16

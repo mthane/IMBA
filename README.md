@@ -62,7 +62,18 @@ docker --version
 
 ```
 cd IMBA/IMBAtracker
-bash setup.sh
+docker build -t tracker_image .
+```
+
+#### Run Docker Image
+```
+docker run tracker_image ./lrvTrack --help
+
+docker run -it tracker_image ./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
+
+
+docker run -v C:\Users\mthan\Documents\IMBA\IMBAtracker\IMBcpp:/app tracker_image ./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
+
 ```
 
 ### Usage 

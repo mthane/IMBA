@@ -9,14 +9,15 @@ RUN apt-get update && \
     apt-get install -y --fix-missing build-essential zlib1g-dev \
     libncurses5-dev libgdbm-dev libnss3-dev \
     libssl-dev libreadline-dev libffi-dev curl software-properties-common \pyqt5-dev-tools \
-    qttools5-dev-tools
+    qttools5-dev-tools 
 
 RUN apt-get install -y  --fix-missing\
     liblpsolve55-dev \
     libalglib-dev \
     libboost-all-dev \
-    git unzip
+    git unzip 
 
+RUN apt-get install -y  --fix-missing libopencv-dev
 
 RUN apt-get install -y cmake 
 # ENV QT_QPA_PLATFORM=offscreen
@@ -49,7 +50,7 @@ COPY . /app
 WORKDIR /app/IMBtracker_cpp
 
 RUN unzip cvblob.zip
-RUN apt-get -y --fix-missing install libopencv-dev
+
 
 WORKDIR /app/IMBtracker_cpp/cvblob
 RUN cmake .
