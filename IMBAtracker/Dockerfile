@@ -45,18 +45,18 @@ RUN apt-get install -y cmake
 WORKDIR /app
 
 # Copy your project files into the container
-COPY . /app
+COPY . .
 # Change directory to IMBtracker_cpp
-WORKDIR /app/IMBtracker_cpp
+WORKDIR /app/IMBAtracker_cpp
 
 RUN unzip cvblob.zip
 
 
-WORKDIR /app/IMBtracker_cpp/cvblob
+WORKDIR /app/IMBAtracker_cpp/cvblob
 RUN cmake .
 RUN make
 
-WORKDIR /app/IMBtracker_cpp
+WORKDIR /app/IMBAtracker_cpp
 RUN cmake .
 RUN make
 

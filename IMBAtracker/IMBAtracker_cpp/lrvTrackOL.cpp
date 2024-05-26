@@ -977,9 +977,10 @@ void showTags2()
        -1);
        */
     //}
-
+      cerr << "!!!! Save tracking-data1" << endl;
     if(it->second.isCluster==false)
     {
+            cerr << "!!!! Save tracking-data2" << endl;
       circle(larvaROI,
           Point2f(
             it->second.heads[c_index].x+PAD,
@@ -1011,8 +1012,8 @@ void showTags2()
       else
         ppm=LRVTRACK_MPP;
 
+      cerr << "!!!! Save tracking-data3" << endl;
       
-    std::cout << "!!!!!!!!!!!!!Hello, world! "+LRVTRACK_DATE+"-data" << std::endl;
       if(LRVTRACK_USE_MODEL)
       {
         fs::path data_folder(LRVTRACK_DATE+"-data");
@@ -2553,7 +2554,7 @@ void updateOneLarva(cvb::CvBlobs &In,
     //      part of a blob.
     cur_larva.inCluster.push_back(0);
 
-    /*if(LRVTRACK_CSV_OUTPUT)
+    if(LRVTRACK_CSV_OUTPUT)
     {
       csvfile << CURRENT_FRAME/VIDEO_FPS <<
         " , " << cur_larva.larva_ID;
@@ -2594,7 +2595,7 @@ void updateOneLarva(cvb::CvBlobs &In,
       //" , " << cur_larva.centroids.back().y + blob.miny <<
       //" , " << cur_larva.inCluster.back() <<
       csvfile << endl;
-    }*/
+    }
 
     cur_larva.lastFrameWithStats=CURRENT_FRAME;
     //check_contour(cur_larva);
@@ -5931,6 +5932,7 @@ int main(int argc, char* argv[])
       std::cerr << "R: " << CURRENT_FRAME << "/" << TOTAL_FRAMES << "\r";
     }
   }
+  cerr << "HELLO World" << endl;
   cerr << "FINISHED!!!" << endl;
   std::cerr << endl;
   cupContours.release();

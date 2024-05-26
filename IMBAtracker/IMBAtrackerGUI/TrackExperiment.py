@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from distutils.filelist import FileList
 
-LRVTRACK = "docker run tracker_image ./lrvTrack"
+LRVTRACK = "./lrvTrack"
 TMPDIR = '/tmp'
 #from TrackUI import Ui_TrackExperiment
 from TrackUI import Ui_MainWindow
@@ -110,7 +110,9 @@ class trackWorker(QtCore.QObject):
             trial_path = trial_path.replace("\\", "/")
             
             video_path = video_path.replace("\\", "/")
-            print(trial_path)
+            #copy video to docker 
+            docker_cmd = "docker cp" + video_path+" tracking_container:/videos"
+            
             command = ' '.join([LRVTRACK,
                         '-x', # offline background computation
                         '-z', # dish size set below
@@ -139,7 +141,7 @@ class trackWorker(QtCore.QObject):
                         '-i',
                         video_path]
                         )
-            print(command)
+            
             with open(trial_path+"/stdout.log","wb") as out, open(trial_path+"/stderr.log","wb") as err:
                 process = subprocess.Popen(command, 
                                             shell=True,

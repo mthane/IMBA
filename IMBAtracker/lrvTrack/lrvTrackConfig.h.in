@@ -1,3 +1,0 @@
-// the configured options and settings for Tutorial
-#define LRVTRACK_VERSION_MAJOR @LRVTRACK_VERSION_MAJOR@
-#define LRVTRACK_VERSION_MINOR @LRVTRACK_VERSION_MINOR@
