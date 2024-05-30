@@ -1,0 +1,30 @@
+Performing C++ SOURCE FILE Test LPSOLVE_LINKS_ALONE failed with the following output:
+Change Dir: /home/thane/IMBA/IMBAtracker/IMBtracker_cpp/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_1b0b9/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_1b0b9.dir/build.make CMakeFiles/cmTC_1b0b9.dir/build
+gmake[1]: Entering directory '/home/thane/IMBA/IMBAtracker/IMBtracker_cpp/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_1b0b9.dir/src.cxx.o
+/usr/bin/c++ -DLPSOLVE_LINKS_ALONE   -o CMakeFiles/cmTC_1b0b9.dir/src.cxx.o -c /home/thane/IMBA/IMBAtracker/IMBtracker_cpp/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_1b0b9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1b0b9.dir/link.txt --verbose=1
+/usr/bin/c++ CMakeFiles/cmTC_1b0b9.dir/src.cxx.o -o cmTC_1b0b9  /usr/lib/liblpsolve55.a 
+/usr/bin/ld: /usr/lib/liblpsolve55.a(lp_MDO.o): in function `getMDO':
+(.text+0x4f6): undefined reference to `colamd_recommended'
+/usr/bin/ld: (.text+0x533): undefined reference to `colamd_set_defaults'
+/usr/bin/ld: (.text+0x5ab): undefined reference to `symamd'
+/usr/bin/ld: (.text+0x5f0): undefined reference to `colamd'
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [CMakeFiles/cmTC_1b0b9.dir/build.make:100: cmTC_1b0b9] Error 1
+gmake[1]: Leaving directory '/home/thane/IMBA/IMBAtracker/IMBtracker_cpp/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_1b0b9/fast] Error 2
+
+
+Source file was:
+#include <lpsolve/lp_lib.h>
+             int main(int /*argc*/, char** /*argv*/) {
+                int major, minor, release, build;
+
+                lp_solve_version(&major, &minor, &release, &build);
+
+                return 0;
+             }
