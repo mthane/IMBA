@@ -1010,9 +1010,6 @@ void showTags2()
         ppm=LRVTRACK_PETRIDISH/(2*circles[bestCircle][2]);
       else
         ppm=LRVTRACK_MPP;
-
-      
-    std::cout << "!!!!!!!!!!!!!Hello, world! "+LRVTRACK_DATE+"-data" << std::endl;
       if(LRVTRACK_USE_MODEL)
       {
         fs::path data_folder(LRVTRACK_DATE+"-data");
@@ -1029,6 +1026,7 @@ void showTags2()
           fs::create_directory(data_folder);
         }
       }
+
       //Here we must check whether the complete added track length is
       //long enough.
       //if((it->second.end_frame-it->second.start_frame)>LRVTRACK_MIN_OUTPUT_DURATION)
