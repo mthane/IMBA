@@ -32,47 +32,31 @@ wsl --install -d Ubuntu-18.04
 This will open another command prompt with the Ubuntu-18.04 system. Here do the following:
 2. Enter desired user name and password...
 3. Install git and clone this repository:
-```
+
 sudo apt update
 sudo apt install git
 sudo git clone https://github.com/mthane/IMBA
 ```
-### Docker Image
-Because of older dependencies which have caused issues we will simply use a Docker Image that encapsulates our c++ software. Next we explain how to install Docker, use our c++ Tracking Software in the command line, and give some examples. Docker is a platform that allows you to develop, ship, and run applications in containers. Here's how to install Docker on a Windows system:
 
-#### Prerequisites
-- Windows 10 64-bit: Pro, Enterprise, or Education edition
-- Hardware virtualization support enabled in BIOS settings
-
-#### Steps
-1. **Download Docker Desktop**: Visit the [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop) webpage and download the Docker Desktop installer.
-
-2. **Install Docker Desktop**: Double-click the downloaded installer (Docker Desktop Installer.exe) to start the installation process. Follow the on-screen instructions to complete the installation.
-
-3. **Enable Hyper-V**: During installation, Docker Desktop will prompt you to enable Hyper-V and Windows Subsystem for Linux (WSL). Click "Install" to enable these features. Note that enabling Hyper-V requires a system restart.
-
-4. **Start Docker Desktop**: Once installation is complete and your system has restarted, Docker Desktop should start automatically. You'll see the Docker icon in the system tray.
-
-5. **Verify Installation**: Open a command prompt or PowerShell window and run the following command to verify that Docker is installed correctly:
+4. Install dependencies
 ```
-docker --version
+sudo apt-get update
+sudo apt-get install -y --fix-missing build-essential zlib1g-dev \
+    libncurses5-dev libgdbm-dev libnss3-dev \
+    libssl-dev libreadline-dev libffi-dev curl software-properties-common \
+    pyqt5-dev-tools qttools5-dev-tools
+    
+sudo apt-get install -y --fix-missing \
+    liblpsolve55-dev \
+    libalglib-dev \
+    libboost-all-dev \
+    git unzip
 ```
 
-#### Build Docker Image
 
+#### Run IMBAtracker
 ```
-cd IMBA/IMBAtracker
-docker build -t tracker_image .
-```
-
-#### Run Docker Image
-```
-docker run tracker_image ./lrvTrack --help
-
-docker run -it tracker_image ./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
-
-
-docker run -v C:\Users\mthan\Documents\IMBA\IMBAtracker\IMBcpp:/app tracker_image ./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
+./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
 
 ```
 
