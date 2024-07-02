@@ -32,27 +32,27 @@ wsl --install -d Ubuntu-18.04
 This will open another command prompt with the Ubuntu-18.04 system. Here do the following:
 2. Enter desired user name and password...
 3. Install git and clone this repository:
-
+```
 sudo apt update
 sudo apt install git
 sudo git clone https://github.com/mthane/IMBA
 ```
 
 4. Install dependencies
+
 ```
 sudo apt-get update
 sudo apt-get install -y --fix-missing build-essential zlib1g-dev \
     libncurses5-dev libgdbm-dev libnss3-dev \
     libssl-dev libreadline-dev libffi-dev curl software-properties-common \
     pyqt5-dev-tools qttools5-dev-tools
-    
+
 sudo apt-get install -y --fix-missing \
     liblpsolve55-dev \
     libalglib-dev \
     libboost-all-dev \
     git unzip
 ```
-
 
 #### Run IMBAtracker
 ```
