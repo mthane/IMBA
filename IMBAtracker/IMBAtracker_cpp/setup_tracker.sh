@@ -1,7 +1,4 @@
-sudo apt update
-sudo apt install git
-sudo git clone https://github.com/mthane/IMBA
-cd IMBA/IMBAtracker/IMBAtracker_cpp
+
 
 sudo apt-get update
 sudo apt-get install -y --fix-missing build-essential zlib1g-dev \
@@ -42,6 +39,7 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
 make -j8
 sudo make install
 sudo ldconfig
+
 
 
 sudo unzip cvblob.zip
