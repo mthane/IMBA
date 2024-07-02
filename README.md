@@ -36,6 +36,10 @@ This will open another command prompt with the Ubuntu-18.04 system. Here do the 
 sudo apt update
 sudo apt install git
 sudo git clone https://github.com/mthane/IMBA
+
+
+cd IMBA/IMBAtracker/IMBAtracker_cpp
+sudo bash setup_tracker.sh
 ```
 
 4. Install dependencies
