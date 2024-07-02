@@ -52,11 +52,35 @@ sudo apt-get install -y --fix-missing \
     libalglib-dev \
     libboost-all-dev \
     git unzip
+
+sudo apt-get install -y --fix-missing libopencv-dev
+
+sudo apt-get install -y cmake
 ```
+
+5. Change to tracker directory, unzip and build the cvblob package.
+```
+
+cd /IMBA/IMBAtracker/IMBAtracker_cpp
+sudo unzip cvblob.zip
+cd cvblob
+sudo cmake .
+sudo make
+
+```
+
+6. Change to tracker directory and build the tracker c++ code.
+```
+./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
+
+```
+
 
 #### Run IMBAtracker
 ```
-./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
+cd ..
+sudo cmake .
+sudo make
 
 ```
 
