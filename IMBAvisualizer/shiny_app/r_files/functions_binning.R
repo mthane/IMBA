@@ -19,7 +19,7 @@
 #' @import dplyr
 #' @import data.table
 #' @export
-#'
+#'c
  
 binning_data <- function(df,
                          variable,
