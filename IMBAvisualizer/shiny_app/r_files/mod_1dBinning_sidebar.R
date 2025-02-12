@@ -22,17 +22,7 @@ mod_1dbinning_sidebar_ui <- function(id) {
         "Bearing angle" =
           "bearing_angle",
         "Distance to odor" =
-          "distance_to_odor",
-        "Time before entering odour half" = #new after publication
-          "time_to_trans_to",
-        "Time before leaving odour half" = #new after publication
-          "time_to_trans_from",
-        "Y coordinate" = #new after publication
-          "spinepoint_y_6_conv",
-        "X coordinate" = #new after publication
-          "spinepoint_x_6_conv",
-        "Direction relative to Y" =
-          "y_angle"
+          "distance_to_odor"
       )),
     
     uiOutput(ns("binwidth")),
@@ -42,10 +32,8 @@ mod_1dbinning_sidebar_ui <- function(id) {
       "Binning Mode",
       choices = c("Population" = "all",
                   "Dish" = "trial",
-                  "Individual" = "id"
-                  )
+                  "Individual" = "id")
     ),      
-    checkboxInput(ns("visited_sides"),"Visited Sides"),
     actionButton(ns("binning_button"), "Update binning")
     
   )
@@ -65,7 +53,7 @@ mod_1dbinning_sidebar_server <- function(id, upload) {
                  output$binwidth <- renderUI({
                    
                    if(input$xvar=="frame"){
-                     limits = c(1,upload()$video_length/4,5) #upload()$video_length
+                     limits = c(1,upload()$video_length/4,5)
                    }
                    
                    if(input$xvar=="bearing_angle"){
@@ -76,50 +64,20 @@ mod_1dbinning_sidebar_server <- function(id, upload) {
                      limits = c(2,20,4)
                    }
                    
-                   if(input$xvar=="time_to_trans_to"){ #new after publication
-                     limits = c(1,upload()$video_length/4,5)
-                   }
-                   
-                   if(input$xvar=="time_to_trans_from"){ #new after publication
-                     limits = c(1,upload()$video_length/4,5)
-                   }
-                   
-                   if(input$xvar=="spinepoint_y_6_conv"){ #new after publication
-                     limits = c(2,20,4)
-                   }
-                   
-                   if(input$xvar=="spinepoint_x_6_conv"){ #new after publication
-                     limits = c(2,20,4)
-                   }
-                   
-                   if(input$xvar=="y_angle"){ #new after publication
-                     limits = c(5,30,10)
-                   }
-                   
                    sliderInput(
                      ns("width"),
                      "Bin width",
                      limits[1],
                      limits[2],
-                     limits[3],
-                     limits[4],
-                     limits[5]#,
-                     #limits[6],
-                     #limits[7],
-                     #limits[8],
-                     #limits[9]
+                     limits[3]
                    )
                    
                  })
-
+                 
                  binnedData <- eventReactive(input$binning_button, {
                    x_var <- input$xvar
                    
-                   if(input$visited_sides==T){
-                     group_condition="Visited_Sides"
-                   }else{
-                     group_condition="group_condition"
-                   }
+                   
                    withCallingHandlers({
                      data <- upload()$data
                      data$group_condition <- paste(data$group,data$condition,sep="-")
@@ -127,51 +85,42 @@ mod_1dbinning_sidebar_server <- function(id, upload) {
                      dfs = list()
                      filters <- filters()
                      i = 1
-                       suppressWarnings({
+                     suppressWarnings({
+                       
+                       if(input$binning_mode =="all"){
+                         df <-
+                           binning_data(
+                             df = data,
+                             variable =  x_var,
+                             width = input$width,
+                             frame_interval = filters$time,
+                             distance_to_odor_interval = filters$odor_distance,
+                             Abs_HC_Angle_interval =  filters$hc_size,
+                             Abs_bearing_angle = filters$bearing_angle,
+                             radius = upload()$radius,
+                             frame_rate=upload()$frame_rate,
+                             filters$direction
+                           )
                          
-                         if(input$binning_mode =="all"){
-                           print(group_condition)
-                           df <-
-                             binning_data(
-                               df = data,
-                               variable =  x_var,
-                               width = input$width,
-                               frame_interval = filters$time,
-                               distance_to_odor_interval = filters$odor_distance,
-                               Abs_HC_Angle_interval =  filters$hc_size,
-                               Abs_bearing_angle = filters$bearing_angle,
-                               spinepoint_y_6_interval = filters$spinepoint_y_6_conv,
-                               spinepoint_x_6_interval = filters$spinepoint_x_6_conv,
-                               abs_y_angle_interval = filters$abs_y_angle,
-                               radius = upload()$radius,
-                               frame_rate=upload()$frame_rate,
-                               filters$direction,
-                               group_condition=group_condition
-                             )
-                           
-                         }else{
-                           df <-
-                             binning_data_grouped(
-                               df = data,
-                               variable =  x_var,
-                               width = input$width,
-                               frame_interval = filters$time,
-                               distance_to_odor_interval = filters$odor_distance,
-                               Abs_HC_Angle_interval =  filters$hc_size,
-                               Abs_bearing_angle = filters$bearing_angle,
-                               spinepoint_y_6_interval = filters$spinepoint_y_6_conv,
-                               spinepoint_x_6_interval = filters$spinepoint_x_6_conv,
-                               abs_y_angle_interval = filters$abs_y_angle,
-                               radius = upload()$radius,
-                               frame_rate=upload()$frame_rate,
-                               grouping=input$binning_mode,
-                               filters$direction,
-                               group_condition=group_condition
-                             )
-                           
-                         }
+                       }else{
+                         df <-
+                           binning_data_grouped(
+                             df = data,
+                             variable =  x_var,
+                             width = input$width,
+                             frame_interval = filters$time,
+                             distance_to_odor_interval = filters$odor_distance,
+                             Abs_HC_Angle_interval =  filters$hc_size,
+                             Abs_bearing_angle = filters$bearing_angle,
+                             radius = upload()$radius,
+                             frame_rate=upload()$frame_rate,
+                             grouping=input$binning_mode,
+                             filters$direction
+                           )
                          
-                       })
+                       }
+                       
+                     })
                      
                      list(data = df,
                           x_var=x_var)

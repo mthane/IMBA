@@ -49,11 +49,6 @@ mod_1dbinning_plots_server <- function(id, upload, binnedData) {
                  })
                  
                  output$plot_line_binned <- renderPlotly({
-                   if(input$visited_sides==T){
-                     group_condition="Visited_Sides"
-                   }else{
-                     group_condition="group_condition"
-                   }
                    binning_data_plot(
                      binnedData()$data,
                      binnedData()$x_var,
@@ -63,8 +58,7 @@ mod_1dbinning_plots_server <- function(id, upload, binnedData) {
                      input$line_binned_npoints,
                      FALSE,
                      input$binning_mode,
-                     input$use_polar,
-                     group_condition
+                     input$use_polar
                    )
                    
                  })
