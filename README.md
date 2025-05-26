@@ -42,7 +42,7 @@ sudo git clone https://github.com/mthane/IMBA
 3. Run setup:
 ```
 cd IMBA/IMBAtracker/IMBAtracker_cpp
-sudo bash setup_tracker.sh
+sudo bash setup.sh
 ```
 
 
