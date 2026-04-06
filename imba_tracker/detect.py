@@ -17,6 +17,17 @@ from imba_tracker.types import TrackedBlob
 
 def extract_blobs(processed_frame: np.ndarray, cfg: TrackerConfig) -> list[TrackedBlob]:
     """Labels connected components on processed_frame > 0."""
+    blobs, _ = extract_blobs_with_labels(processed_frame, cfg)
+    return blobs
+
+
+def extract_blobs_with_labels(
+    processed_frame: np.ndarray, cfg: TrackerConfig
+) -> tuple[list[TrackedBlob], np.ndarray]:
+    """
+    Returns filtered blobs and int32 label image (same shape as processed_frame).
+    TrackedBlob.cc_index matches the connected-component index i in cv2.connectedComponents.
+    """
     mask = (processed_frame > 0).astype(np.uint8)
     n, labels, stats, centroids = cv2.connectedComponentsWithStats(
         mask, connectivity=8
@@ -35,6 +46,7 @@ def extract_blobs(processed_frame: np.ndarray, cfg: TrackerConfig) -> list[Track
         out.append(
             TrackedBlob(
                 label=next_label,
+                cc_index=i,
                 area=area,
                 centroid_x=float(cx),
                 centroid_y=float(cy),
@@ -45,4 +57,4 @@ def extract_blobs(processed_frame: np.ndarray, cfg: TrackerConfig) -> list[Track
             )
         )
         next_label += 1
-    return out
+    return out, labels.astype(np.int32)

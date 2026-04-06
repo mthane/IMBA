@@ -27,6 +27,7 @@ class UiExportPaths:
     detections_csv: Path
     stdout_log: Path
     metadata_txt: Path
+    overlay_mp4: Path | None = None
 
 
 def prepare_ui_paths(output_dir: Path, date_stamp: str | None = None) -> UiExportPaths:

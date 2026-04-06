@@ -1,13 +1,12 @@
-"""Minimal IMBA tracking core: video → preprocess → per-frame detections (no ID linking).
-
-Call from Python or use ``python -m imba_tracker.cli`` (e.g. from R Shiny via ``system2`` / ``processx``).
-"""
+"""IMBA tracking: video → preprocess → detections; optional multi-frame tracks + overlay MP4."""
 
 from imba_tracker.config import TrackerConfig
 from imba_tracker.pipeline import (
     BackgroundMode,
     iter_frame_detections,
+    iter_frame_tracking,
     run_experiment_pipeline,
+    run_tracked_experiment_with_overlay,
     run_ui_style_pipeline,
     run_video_detections,
 )
@@ -19,7 +18,9 @@ __all__ = [
     "FrameDetections",
     "TrackedBlob",
     "iter_frame_detections",
+    "iter_frame_tracking",
     "run_video_detections",
     "run_ui_style_pipeline",
     "run_experiment_pipeline",
+    "run_tracked_experiment_with_overlay",
 ]
