@@ -25,3 +25,9 @@ build/
 *.swo
 .DS_Store
 Thumbs.db
+
+# Local tracker run outputs (example data folder)
+legacy/data/*-data/
+legacy/data/stdout.log
+legacy/data/stderr.log
+legacy/data/metadata.txt
