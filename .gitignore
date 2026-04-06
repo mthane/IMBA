@@ -2,3 +2,26 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.eggs/
+dist/
+build/
+
+# CMake / C++ build trees
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/Makefile
+**/*.o
+**/cvblob/
+
+# Editor / OS
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
