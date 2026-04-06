@@ -28,6 +28,11 @@ class TrackerConfig:
     offline_bg_frame_step: int = 10
     # TrackExperiment.py: big dish 138 mm, small 84 (informational for metadata / future use)
     petri_dish_mm: int = 138
+    # Multi-frame association (Hungarian on 1 - IoU)
+    association_cost_max: float = 0.92
+    association_min_iou: float = 0.02
+    # Heuristic collision events (bbox overlap / centroid containment)
+    collision_bbox_iou_gate: float = 0.05
 
     @classmethod
     def ui_defaults(cls) -> "TrackerConfig":

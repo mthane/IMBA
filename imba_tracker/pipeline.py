@@ -14,7 +14,10 @@ from typing import Generator
 import cv2
 import numpy as np
 
+import json
+
 from imba_tracker.association import AssociationEngine
+from imba_tracker.collisions import detect_collision_events
 from imba_tracker.config import TrackerConfig
 from imba_tracker.detect import extract_blobs, extract_blobs_with_labels
 from imba_tracker.dish import detect_petri_dish_circle
@@ -31,7 +34,12 @@ from imba_tracker.export_ui import (
     write_stderr_empty,
     write_stdout_log,
 )
-from imba_tracker.types import FrameDetections, FrameTracking
+from imba_tracker.types import (
+    CollisionEvent,
+    FrameDetections,
+    FrameTracking,
+    TrackedLarvaView,
+)
 
 
 class BackgroundMode(str, Enum):
@@ -205,7 +213,12 @@ def iter_frame_tracking(
             m, _ = blob_mask_from_labels(labels, grey, b)
             masks.append(m.astype(np.uint8))
 
-        matches = engine.associate(blobs, masks)
+        matches = engine.associate(
+            blobs,
+            masks,
+            cost_max=cfg.association_cost_max,
+            min_iou=cfg.association_min_iou,
+        )
         larvae: list[TrackedLarvaView] = []
         for bi, b in enumerate(blobs):
             tid = matches[bi]
@@ -337,6 +350,8 @@ def run_tracked_experiment_with_overlay(
 
     fd_list: list[FrameDetections] = []
     csv_handles: dict[int, object] = {}
+    collision_events: list[CollisionEvent] = []
+    prev_larvae: list[TrackedLarvaView] = []
     try:
         vw = OverlayVideoWriter(overlay_path, (w, h), fps)
         for ft in iter_frame_tracking(
@@ -345,6 +360,15 @@ def run_tracked_experiment_with_overlay(
             grey_background=bg,
             max_frames=max_frames,
         ):
+            collision_events.extend(
+                detect_collision_events(
+                    prev_larvae,
+                    ft.larvae,
+                    ft.frame_index,
+                    bbox_iou_gate=cfg.collision_bbox_iou_gate,
+                )
+            )
+            prev_larvae = ft.larvae
             fd_list.append(
                 FrameDetections(
                     frame_index=ft.frame_index,
@@ -388,6 +412,7 @@ def run_tracked_experiment_with_overlay(
             f"Frames processed: {len(fd_list)}",
             f"Total blob observations (detections rows): {n_obs}",
             f"Data directory: {paths.data_dir}",
+            f"Collision events written: {coll_path.resolve()}",
             "Exit: OK",
         ]
     )
