@@ -18,7 +18,7 @@ app_ui <- function(request) {
     
     
     fluidPage(
-      h2("IMBAvisualizer"),
+      h2("IMBA"),
       hr(),
       #dashboardHeader(title = "ILLAV"),
       
