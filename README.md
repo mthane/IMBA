@@ -1,75 +1,75 @@
-# IMBA: Individual Maggot Behavior Analyzer
+# IMBA 2.0: Individual Maggot Behavior Analyzer
 
+Research codebase for larval tracking and analysis: **legacy** C++/Qt stack (preserved from IMBA 1.x), a **Python** tracker (`imba_tracker`), and an **R/Shiny** app (`shiny_app` package `imba`).
 
-## Introduction <a name="introduction"></a>
+## Repository layout
 
-Neuronally orchestrated muscular movement and locomotion are fundamental aspects of multicellular animals. The larva of the fruit fly Drosophila melanogaster provides a unique opportunity to study these processes due to its simple brain and genetic accessibility. However, traditional methods of studying larval locomotion often aggregate measurements across animals or test animals individually, limiting our ability to understand inter- and intra-individual variability in locomotion and its neurogenetic determinants.
+| Path | Role |
+|------|------|
+| `legacy/tracker_cpp/` | Canonical C++ `lrvTrack` build (CMake, OpenCV, cvblob). |
+| `legacy/lrv_track/` | Second copy of the C++ tree (historical duplicate; pick one for builds). |
+| `legacy/qt_gui/` | PyQt5 UI (`TrackUI.py`, `.ui` files). |
+| `legacy/scripts/` | Bash + R helpers (e.g. collision CSV pipeline). |
+| `legacy/docker/` | Dockerfile for C++ tracker image (build from repo root). |
+| `legacy/data/` | Example media (e.g. `example_video.mp4`). |
+| `imba_tracker/` | Python package: `pip install -e .` from repository root. |
+| `tests/` | Python tests (pytest). |
+| `shiny_app/` | R Golem/Shiny visualizer; install with `devtools::install()` from this folder. |
+| `shared/` | Placeholder for cross-language schemas and example payloads. |
+| `evaluation/` | Placeholder for benchmarks vs legacy outputs. |
+| `scripts/` | Helper scripts for the Python tracker (e.g. `run_python_tracker_example.*`). |
 
-To address this gap, we introduce the Individual Maggot Behavior Analyzer (IMBA), a software tool designed for analyzing the behavior of individual larvae within groups. IMBA enables researchers to reliably resolve individual larval identities across collisions, providing unprecedented insights into locomotion variability and its underlying genetic and neural mechanisms.
+## Python tracker
 
-In this README, we provide an overview of IMBA's features, installation instructions, usage guidelines, and examples of its application in studying larval behavior in various biomedical research contexts. With IMBA, researchers can obtain a rich understanding of individual larval behavior, paving the way for deeper insights into neurogenetic pathways governing locomotion and its modulation.
+From the repository root:
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [IMBAtracker](#imbatracker)
-3. [IMBAvisualizer](#imbavisualizer)
-
----
-
-# IMBAtracker <a name="imbatracker"></a>
-The IMBAtracker consists of mainly two parts. The first part is the Tracking software that is written in c++. It is developed with the help of the OpenCV library and CVblob. In order to run the tracker this c++ software has to be installed. It can be used as a standalone tool via command line.
-The second part is the GUI which is developed in Python 3.9 using the Qt library. The GUI is providing an easy use of the command line tool for tracking large amounts of data. First we will install the Tracker and then the GUI.
-
-## Installation - Tracker
-
-### Cloning Repository and using WSL
-If you are using Ubuntu you can skip step 1 and 2.
-1. Open command prompt and install WSL2 with Ubuntu 18.04 using:
-```
-wsl --install -d Ubuntu-18.04
-```
-
-This will open another command prompt with the Ubuntu-18.04 system. Here do the following:
-2. Enter desired user name and password...
-3. Install git and clone this repository:
-```
-sudo apt update
-sudo apt install git
-sudo git clone https://github.com/mthane/IMBA
+```bash
+pip install -e .
+pytest
 ```
 
+Run a quick detection demo (uses `legacy/data/example_video.mp4` by default):
 
-3. Run setup:
+```bash
+bash scripts/run_python_tracker_example.sh
 ```
-cd IMBA/IMBAtracker/IMBAtracker_cpp
+
+On Windows PowerShell:
+
+```powershell
+.\scripts\run_python_tracker_example.ps1
+```
+
+## Legacy C++ tracker (Linux / WSL)
+
+Build dependencies and compile (typical Ubuntu/WSL):
+
+```bash
+cd legacy/tracker_cpp
 sudo bash setup.sh
 ```
 
+Run `lrvTrack` (see `legacy/docs/tracker_command.txt` for example flags).
 
-#### Run IMBAtracker
+Docker (context = repository root):
+
+```bash
+docker build -f legacy/docker/Dockerfile -t imba-lrvtrack .
 ```
-./lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r "." -i example_video.mp4
 
-```
+## Qt GUI
 
-### Usage 
+Legacy GUI sources live under `legacy/qt_gui/`. Install a Python environment with PyQt5 and OpenCV, then run `TrackUI.py` from that directory or extend `PYTHONPATH` accordingly.
 
+## Shiny / R visualizer
 
-### Examples
-
-## Installation - GUI
-
-### Usage 
-
-
-### Examples
-
-# IMBAvisualizer <a name="imbavisualizer"></a>
-
-Install Rtools 4.2 form https://cran.r-project.org/bin/windows/Rtools/
-```
-cd IMBA/IMBAvisualizer
+```bash
+cd shiny_app
 sudo bash setup.sh
 ```
 
+The setup script expects to be run from `shiny_app/` (package root). In R, `devtools::install()` then `imba::run_app()`.
 
+## Legacy IMBA 1.0
+
+The original monolithic layout is archived separately; this repository is structured for migration to Python + Shiny without mixing build artifacts into new code.

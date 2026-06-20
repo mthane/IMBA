@@ -1,4 +1,6 @@
 import sys
+from pathlib import Path
+
 import cv2
 import os
 import numpy as np
@@ -9,6 +11,10 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from distutils.filelist import FileList
+
+_QT = Path(__file__).resolve().parent.parent / "qt_gui"
+if str(_QT) not in sys.path:
+    sys.path.insert(0, str(_QT))
 
 LRVTRACK = "docker run tracker_image ./lrvTrack"
 TMPDIR = '/tmp'

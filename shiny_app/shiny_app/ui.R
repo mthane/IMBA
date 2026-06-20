@@ -2,7 +2,7 @@
 ui <- fluidPage(
   tagList(
     fluidPage(
-      h2("IMBAvisualizer"),
+      h2("IMBA"),
       hr(),
       
       shinyjs::useShinyjs(),

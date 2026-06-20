@@ -8,7 +8,12 @@ import sys
 from pathlib import Path
 
 from imba_tracker.config import TrackerConfig
-from imba_tracker.pipeline import BackgroundMode, iter_frame_detections, run_ui_style_pipeline
+from imba_tracker.pipeline import (
+    BackgroundMode,
+    iter_frame_detections,
+    run_tracked_experiment_with_overlay,
+    run_ui_style_pipeline,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -39,6 +44,18 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--max-frames", type=int, default=None)
     p.add_argument("--no-auto-dish", action="store_true", help="Disable petri dish ROI detection")
+    p.add_argument(
+        "--track-overlay",
+        action="store_true",
+        help="With --experiment-output: run ID + spine/contour tracking, write per-ID CSVs "
+        "and overlay_test.mp4 (legacy-shaped columns; geometry approximates C++).",
+    )
+    p.add_argument(
+        "--overlay-name",
+        type=str,
+        default="overlay_test.mp4",
+        help="With --track-overlay: MP4 filename inside the date-stamped data directory.",
+    )
 
     # JSONL mode (default when not --experiment-output)
     p.add_argument(
@@ -72,13 +89,28 @@ def main(argv: list[str] | None = None) -> int:
         cfg = TrackerConfig.ui_defaults()
         if args.small_dish:
             cfg.petri_dish_mm = 84
-        run_ui_style_pipeline(
-            args.video,
-            out_dir,
-            cfg,
-            max_frames=args.max_frames,
-            auto_dish=not args.no_auto_dish,
-        )
+        if args.track_overlay:
+            paths = run_tracked_experiment_with_overlay(
+                args.video,
+                out_dir,
+                cfg,
+                max_frames=args.max_frames,
+                auto_dish=not args.no_auto_dish,
+                overlay_filename=args.overlay_name,
+            )
+            if paths.overlay_mp4:
+                print(
+                    f"Overlay video: {paths.overlay_mp4.resolve()}",
+                    file=sys.stderr,
+                )
+        else:
+            run_ui_style_pipeline(
+                args.video,
+                out_dir,
+                cfg,
+                max_frames=args.max_frames,
+                auto_dish=not args.no_auto_dish,
+            )
         print(f"Wrote experiment output under: {out_dir.resolve()}", file=sys.stderr)
         return 0
 
