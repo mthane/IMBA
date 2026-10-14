@@ -4,8 +4,9 @@ IMBA tracks individual *Drosophila* larvae in a group, including through collisi
 
 Please cite this software using the original paper: [10.1098/rsob.220308](https://royalsocietypublishing.org/rsob/article/13/4/220308/91325/High-resolution-analysis-of-individual-Drosophila).
 
-It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://elifesciences.org/reviewed-preprints/106148)).
-s make up a run:
+It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3)).
+
+Three programs make up a run:
 
 1. **lrvTrack** tracks a video and writes one CSV per larva, plus an overlay video.
 2. **TrackExperiment.py** is the PyQt window for a whole experiment. It calls the same tracker and arranges the files for analysis.
@@ -13,10 +14,14 @@ s make up a run:
 
 This repository has no `LICENSE` file. The tracker build unpacks `IMBAtracker/IMBtracker_cpp/cvblob.zip`, which carries its own notices.
 
+## Installation
+
+- Windows: [Step-by-step Docker installation guide](docs/INSTALL_WINDOWS.md). Docker Desktop is not required. The guide uses WSL2, Ubuntu, and Docker Engine.
+- Linux: with Docker Engine installed, use the `docker compose` commands in this README from the repository root. A native compile without Docker is in [Install without Docker](#install-without-docker). This repository does not include a separate Linux installation tutorial.
+
 ## What you need
 
-- Docker Engine and Docker Compose v2.
-- On Windows, [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) with the WSL2 backend. Run the commands below from PowerShell or from WSL; both use the same `compose.yaml`.
+- Docker Engine and Docker Compose v2. On Windows, follow the [installation guide](docs/INSTALL_WINDOWS.md).
 - Your raw video. Put a copy at `data/input/example_video.mp4`, or set `IMBA_VIDEO` to another filename in `data/input`. Videos are not stored in git.
 
 All commands below are run from the repository root.
