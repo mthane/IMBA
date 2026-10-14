@@ -4,7 +4,7 @@ IMBA tracks individual *Drosophila* larvae in a group, including through collisi
 
 Please cite this software using the original Paper: [10.1098/rsob.220308](https://royalsocietypublishing.org/rsob/article/13/4/220308/91325/High-resolution-analysis-of-individual-Drosophila).
 
-It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3]([https://doi.org/10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3))).
+It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://elifesciences.org/reviewed-preprints/106148)).
 s make up a run:
 
 1. **lrvTrack** tracks a video and writes one CSV per larva, plus an overlay video.
