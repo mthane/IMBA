@@ -1,6 +1,12 @@
 # IMBA 1.0 — Individual Maggot Behavior Analyzer
 
-IMBA tracks individual *Drosophila* larvae in a group, including through collisions, and analyzes the resulting trajectories. It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3)).
+IMBA tracks individual *Drosophila* larvae in a group, including through collisions, and analyzes the resulting trajectories.
+
+Please cite this software using the original Paper: doi.org/10.1098/rsob.220308.
+
+It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3]([https://doi.org/10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3))).
+
+
 
 Three programs make up a run:
 
@@ -38,20 +44,24 @@ That runs:
 lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r . -i /data/input/example_video.mp4
 ```
 
-| Flag | Meaning |
-|---|---|
-| `-z` | Petri-dish diameter in millimetres. `138` is the 15 cm dish. `84` is the 9 cm dish. |
-| `-v` | Frames per second. |
-| `-i` | Video path inside the container. |
-| `--min-obj-size`, `--max-obj-size` | Blob area limits, in pixels. |
+
+| Flag                               | Meaning                                                                             |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| `-z`                               | Petri-dish diameter in millimetres. `138` is the 15 cm dish. `84` is the 9 cm dish. |
+| `-v`                               | Frames per second.                                                                  |
+| `-i`                               | Video path inside the container.                                                    |
+| `--min-obj-size`, `--max-obj-size` | Blob area limits, in pixels.                                                        |
+
 
 Files are exchanged through these folders:
 
-| On your computer | In the container | Access |
-|---|---|---|
-| `data/input` | `/data/input` | read-only |
-| `data/output` | `/data/output` | read/write |
-| `config` | `/app/config` | read-only |
+
+| On your computer | In the container | Access     |
+| ---------------- | ---------------- | ---------- |
+| `data/input`     | `/data/input`    | read-only  |
+| `data/output`    | `/data/output`   | read/write |
+| `config`         | `/app/config`    | read-only  |
+
 
 `data/output` must exist before you run. Results appear there, named with the time of the run:
 
@@ -168,14 +178,18 @@ To run the same analysis without the browser, for the GUI output of a 5-second, 
 docker compose run --rm --entrypoint Rscript visualizer -e 'source("global.R"); dir.create("/data/analysis/example", recursive=TRUE, showWarnings=FALSE); process_data_dt(input_dir="/data/gui_output", output_dir="/data/analysis/example", save_as="example", radius=42.5, drop_contours=TRUE, frame_rate=16, video_length=5)'
 ```
 
+
+
 ## If something goes wrong
 
 - **Error setting up the capture device.** The video is not in `/data/input`, or a Windows path such as `C:\...` was passed into the container. Use `-i /data/input/<name>.mp4`.
 - **Overlay video, and no CSV folder.** Every detected object was above the 6 mm² cluster cutoff for the `-z` you chose. Check the overlay, then run again with the diameter of the dish you filmed (84 or 138).
-- **`H264` / `avc1` on the tracker log.** OpenCV writes the mp4 with the `avc1` codec. The file is still produced.
-- **`set_int: Column 0 out of range`.** Printed by the assignment solver while it searches. A finished run continues and prints `FINISHED!!!`.
+- `H264` **/** `avc1` **on the tracker log.** OpenCV writes the mp4 with the `avc1` codec. The file is still produced.
+- `set_int: Column 0 out of range`**.** Printed by the assignment solver while it searches. A finished run continues and prints `FINISHED!!!`.
 - **Output files owned by root.** Set `IMBA_UID` and `IMBA_GID` as shown above.
-- **`/data/output` is not writable.** Create `data/output` on the host before `docker compose run`.
+- `/data/output` **is not writable.** Create `data/output` on the host before `docker compose run`.
+
+
 
 ## Install without Docker
 
