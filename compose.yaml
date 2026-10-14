@@ -1,0 +1,42 @@
+# IMBA 1.0. Raw video stays on the host. Tracking files are written in the
+# container working directory (/data/output), which is bind-mounted.
+#
+# Override locations for large datasets:
+#   IMBA_INPUT_DIR, IMBA_OUTPUT_DIR, IMBA_CONFIG_DIR, IMBA_VIDEO
+# On Linux, set IMBA_UID and IMBA_GID so output files are owned by you.
+services:
+  tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: imba-lrvtrack:1.0
+    working_dir: /data/output
+    user: "${IMBA_UID:-0}:${IMBA_GID:-0}"
+    volumes:
+      - ${IMBA_INPUT_DIR:-./data/input}:/data/input:ro
+      - ${IMBA_OUTPUT_DIR:-./data/output}:/data/output
+      - ${IMBA_CONFIG_DIR:-./config}:/app/config:ro
+    command:
+      - -x
+      - -z
+      - "138"
+      - --min-obj-size
+      - "110"
+      - --max-obj-size
+      - "5000"
+      - -p
+      - --thread-count
+      - "9"
+      - -o
+      - -v
+      - "16"
+      - -d
+      - "13"
+      - -w
+      - "0.04"
+      - -u
+      - -t
+      - -r
+      - .
+      - -i
+      - /data/input/${IMBA_VIDEO:-example_video.mp4}

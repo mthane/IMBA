@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Host data exchanged with the tracker container. Keep the directories, not the files.
+data/input/**
+data/output/**
+!data/input/.gitkeep
+!data/output/.gitkeep

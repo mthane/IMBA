@@ -1,0 +1,16 @@
+.git
+data
+IMBAtracker/IMBtracker_cpp/cvblob
+config
+**/*.mp4
+**/*.avi
+**/*.pdf
+**/*.pyc
+**/__pycache__
+**/.swp
+**/.swo
+**/CMakeCache.txt
+**/CMakeFiles
+**/cmake_install.cmake
+**/Makefile
+IMBAvisualizer
