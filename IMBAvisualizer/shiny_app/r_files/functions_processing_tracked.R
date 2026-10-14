@@ -175,10 +175,17 @@ create_dataset_from_dir <-
             header = F
           ))
         
+        # lrvTrack appends millimetres-per-pixel after collision_flag.
+        if (ncol(track) == length(column_names) + 1) {
+          track <- track[, seq_len(length(column_names)), drop = FALSE]
+        }
         colnames(track) <- column_names
       } else{
         track <-
           as.data.frame(fread(paste(input_dir, track_dir, sep = "/"), header = F))
+        if (ncol(track) == length(column_names_contours) + 1) {
+          track <- track[, seq_len(length(column_names_contours)), drop = FALSE]
+        }
         colnames(track) <- column_names_contours
         track[contours] <- sapply(track[contours], as.numeric)
       }

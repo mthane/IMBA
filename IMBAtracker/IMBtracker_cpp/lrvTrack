@@ -1,0 +1,12 @@
+#!/bin/sh
+# TrackExperiment.py calls this path with the trial directory as its working
+# directory. The tracking program is the unmodified lrvTrack binary in the
+# imba-lrvtrack image. A native `make` in this directory overwrites this script.
+set -eu
+exec docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$PWD:$PWD" \
+  -w "$PWD" \
+  --entrypoint /usr/local/bin/lrvTrack \
+  imba-lrvtrack:1.0 \
+  "$@"

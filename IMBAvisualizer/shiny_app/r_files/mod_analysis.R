@@ -15,6 +15,19 @@
 #' 
 #' 
 #' 
+# shinyFiles path vectors sometimes start with "" and sometimes are a bare
+# folder name. Join either form onto the base directory.
+join_base_dir <- function(root, parts) {
+  rel <- paste(parts, collapse = "/")
+  if (!nzchar(rel)) {
+    return(root)
+  }
+  if (startsWith(rel, "/") || endsWith(root, "/") || endsWith(root, "\\")) {
+    return(paste0(root, rel))
+  }
+  paste0(root, "/", rel)
+}
+
 mod_analysis_ui <- function(id, label = "Base directory") {
   ns <- NS(id)
 
@@ -37,7 +50,7 @@ mod_analysis_ui <- function(id, label = "Base directory") {
                         textInput(
                           ns('base_dir'),
                           label = "Base directory",
-                          value = "C:"),
+                          value = Sys.getenv("IMBA_DATA_ROOT", unset = "C:")),
                         shinyDirButton(
                           ns("exp_dir"),
                           "Choose directory",
@@ -171,10 +184,7 @@ mod_analysis_server <- function(id) {
         message = "fetch metadata ..."
         shinyjs::html("consoleOutput", message)
 
-        directory = paste(input$exp_dir[["path"]],
-                          collapse = "/")
-        directory = paste0(input$base_dir,
-                           directory)
+        directory = join_base_dir(input$base_dir, input$exp_dir[["path"]])
         dirs <- dir(directory, 
                     "metadata.txt",
                     recursive = TRUE)
@@ -189,11 +199,13 @@ mod_analysis_server <- function(id) {
       data_reactive <- reactiveValues(data = NULL)
       
       observeEvent(input$process_per_frame, {
-        track_dir = paste0(input$base_dir, paste(input$exp_dir[["path"]], collapse = "/"))
+        track_dir = join_base_dir(input$base_dir, input$exp_dir[["path"]])
         
-        analysis_dir <- paste(output_dir(),
-                              paste(input$save_as,"analysis",sep="-"), sep = "/")
-        analysis_dir <- paste0(input$base_dir,analysis_dir)
+        analysis_dir <- join_base_dir(
+          input$base_dir,
+          paste(output_dir(),
+                paste(input$save_as, "analysis", sep = "-"), sep = "/")
+        )
        
         dir.create(analysis_dir)
         withCallingHandlers(

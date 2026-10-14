@@ -1,5 +1,5 @@
 
-files.sources <- paste("r_files",list.files("r_files"),sep="/")
+files.sources <- list.files("r_files", pattern = "\\.R$", full.names = TRUE)
 sapply(files.sources, source)
 library(shinyWidgets)
 library(shinyFiles)

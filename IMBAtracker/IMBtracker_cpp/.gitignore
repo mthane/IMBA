@@ -1,6 +1,7 @@
 *.swp
 cvblob/
-lrvTrack
+# lrvTrack here is the GUI launcher script, not a compiled binary.
+# A native `make` overwrites that script with an ELF. Do not commit the binary.
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake

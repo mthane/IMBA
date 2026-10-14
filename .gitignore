@@ -8,3 +8,7 @@ data/input/**
 data/output/**
 !data/input/.gitkeep
 !data/output/.gitkeep
+data/gui_experiment/**
+data/gui_output/**
+data/analysis/**
+!data/analysis/.gitkeep

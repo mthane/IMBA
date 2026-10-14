@@ -4,8 +4,11 @@
 # Define server logic to summarize and view selected dataset ----
 server <- function(input, output) {
   
-  # Your application server logic 
-  memory.limit(size=50000)
+  # Your application server logic
+  # memory.limit() is Windows-only and errors on Linux, including the container.
+  if (identical(.Platform$OS.type, "windows")) {
+    memory.limit(size=50000)
+  }
   options(shiny.maxRequestSize=30*1024^2)
   
   # observeEvent(input$close_session,{

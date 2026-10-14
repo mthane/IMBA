@@ -1,0 +1,7 @@
+legacy
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+**/*Zone.Identifier
