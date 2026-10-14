@@ -1,6 +1,8 @@
 # IMBA 1.0 — Individual Maggot Behavior Analyzer
 
-IMBA tracks individual *Drosophila* larvae in a group, including through collisions, and analyzes the resulting trajectories. It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3)).
+IMBA tracks individual *Drosophila* larvae in a group, including through collisions, and analyzes the resulting trajectories. 
+Please cite this software using the original Paper: doi.org/10.1098/rsob.220308.
+It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3)).
 
 Three programs make up a run:
 
