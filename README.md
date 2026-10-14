@@ -2,11 +2,9 @@
 
 IMBA tracks individual *Drosophila* larvae in a group, including through collisions, and analyzes the resulting trajectories.
 
-Please cite this software using the original Paper: doi.org/10.1098/rsob.220308.
+Please cite this software using the original Paper: [10.1098/rsob.220308](https://royalsocietypublishing.org/rsob/article/13/4/220308/91325/High-resolution-analysis-of-individual-Drosophila).
 
 It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3]([https://doi.org/10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3))).
-
-
 
 Three programs make up a run:
 
@@ -178,8 +176,6 @@ To run the same analysis without the browser, for the GUI output of a 5-second, 
 docker compose run --rm --entrypoint Rscript visualizer -e 'source("global.R"); dir.create("/data/analysis/example", recursive=TRUE, showWarnings=FALSE); process_data_dt(input_dir="/data/gui_output", output_dir="/data/analysis/example", save_as="example", radius=42.5, drop_contours=TRUE, frame_rate=16, video_length=5)'
 ```
 
-
-
 ## If something goes wrong
 
 - **Error setting up the capture device.** The video is not in `/data/input`, or a Windows path such as `C:\...` was passed into the container. Use `-i /data/input/<name>.mp4`.
@@ -188,8 +184,6 @@ docker compose run --rm --entrypoint Rscript visualizer -e 'source("global.R"); 
 - `set_int: Column 0 out of range`**.** Printed by the assignment solver while it searches. A finished run continues and prints `FINISHED!!!`.
 - **Output files owned by root.** Set `IMBA_UID` and `IMBA_GID` as shown above.
 - `/data/output` **is not writable.** Create `data/output` on the host before `docker compose run`.
-
-
 
 ## Install without Docker
 
