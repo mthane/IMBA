@@ -102,6 +102,9 @@ mod_aggregation_server <- function(id,upload,threshold){
         filters$odor_distance,
         filters$hc_size,
         filters$bearing_angle,
+        filters$spinepoint_y_6_conv, #new after publication
+        filters$spinepoint_x_6_conv, #new after publication
+        filters$abs_y_angle, #new after publication
         upload()$radius,
         upload()$video_length,
         upload()$frame_rate,

@@ -72,7 +72,12 @@ mod_analysis_ui <- function(id, label = "Base directory") {
                           numericInput(ns("threshold_hva_speed"),"Threshold for the head vector angular speed", 35),
                           numericInput(ns("threshold_tva_speed"),"Threshold for the tail vector angular speed", 45),
                           sliderInput(ns("hc_size"),label = "HC size",0,360,value=c(0,360))
-                   )
+                   )#,
+                   #column(4,
+                   #       h4("Step Options"),
+                   #       numericInput(ns("threshold_f_step"),"Tail velocity threshold for forward step detection", 0.6),
+                   #       numericInput(ns("threshold_b_step"),"Tail velocity threshold for backward step detection", -0.4)
+                   #)
                  
                  )
                ),
@@ -204,7 +209,9 @@ mod_analysis_server <- function(id) {
               threshold_head_vector_angular_speed = input$threshold_hva_speed,
               threshold_tail_vector_angular_speed = input$threshold_tva_speed,
               min_hc_size = input$hc_size[1],
-              max_hc_size = input$hc_size[2]
+              max_hc_size = input$hc_size[2]#,
+              #threshold_tail_speed_foward = input$threshold_f_step,
+              #threshold_tail_speed_backward = input$threshold_b_step
             )
           
           ,

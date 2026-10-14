@@ -93,13 +93,13 @@ mod_singleTimeSeries_ui <- function(id, label = "Track selection") {
                    6,
                    sliderInput(
                      ns("slider_time"),
-                     "Time:",-240,
-                     240,
+                     "Time:",-60,
+                     900,
                      c(0, 180),
                      step = 1,
                      width = 1500
                    ),
-                   sliderInput(ns("ylimits"), "Y-axis Limits", -10, 10, value = c(-5, 5)),
+                   sliderInput(ns("ylimits"), "Y-axis Limits", -10, 10, value = c(-5, 5),step = 0.1),
                  )
                ),
                

@@ -1,4 +1,4 @@
 
 global_vars = function(){
-  readRDS(system.file("extdata","global_variables.Rds",package = "illav"))
+  readRDS("~/IMBA/IMBAvisualizer/shiny_app/global_variables.Rds")
 }

@@ -22,7 +22,17 @@ mod_1dbinning_sidebar_ui <- function(id) {
         "Bearing angle" =
           "bearing_angle",
         "Distance to odor" =
-          "distance_to_odor"
+          "distance_to_odor",
+        "Time before entering odour half" = #new after publication
+          "time_to_trans_to",
+        "Time before leaving odour half" = #new after publication
+          "time_to_trans_from",
+        "Y coordinate" = #new after publication
+          "spinepoint_y_6_conv",
+        "X coordinate" = #new after publication
+          "spinepoint_x_6_conv",
+        "Direction relative to Y" =
+          "y_angle"
       )),
     
     uiOutput(ns("binwidth")),
@@ -53,7 +63,7 @@ mod_1dbinning_sidebar_server <- function(id, upload) {
                  output$binwidth <- renderUI({
                    
                    if(input$xvar=="frame"){
-                     limits = c(1,upload()$video_length/4,5)
+                     limits = c(1,upload()$video_length/4,5) #upload()$video_length
                    }
                    
                    if(input$xvar=="bearing_angle"){
@@ -64,12 +74,38 @@ mod_1dbinning_sidebar_server <- function(id, upload) {
                      limits = c(2,20,4)
                    }
                    
+                   if(input$xvar=="time_to_trans_to"){ #new after publication
+                     limits = c(1,upload()$video_length/4,5)
+                   }
+                   
+                   if(input$xvar=="time_to_trans_from"){ #new after publication
+                     limits = c(1,upload()$video_length/4,5)
+                   }
+                   
+                   if(input$xvar=="spinepoint_y_6_conv"){ #new after publication
+                     limits = c(2,20,4)
+                   }
+                   
+                   if(input$xvar=="spinepoint_x_6_conv"){ #new after publication
+                     limits = c(2,20,4)
+                   }
+                   
+                   if(input$xvar=="y_angle"){ #new after publication
+                     limits = c(5,30,10)
+                   }
+                   
                    sliderInput(
                      ns("width"),
                      "Bin width",
                      limits[1],
                      limits[2],
-                     limits[3]
+                     limits[3],
+                     limits[4],
+                     limits[5]#,
+                     #limits[6],
+                     #limits[7],
+                     #limits[8],
+                     #limits[9]
                    )
                    
                  })
@@ -97,6 +133,9 @@ mod_1dbinning_sidebar_server <- function(id, upload) {
                                distance_to_odor_interval = filters$odor_distance,
                                Abs_HC_Angle_interval =  filters$hc_size,
                                Abs_bearing_angle = filters$bearing_angle,
+                               spinepoint_y_6_interval = filters$spinepoint_y_6_conv,
+                               spinepoint_x_6_interval = filters$spinepoint_x_6_conv,
+                               abs_y_angle_interval = filters$abs_y_angle,
                                radius = upload()$radius,
                                frame_rate=upload()$frame_rate,
                                filters$direction
@@ -112,6 +151,9 @@ mod_1dbinning_sidebar_server <- function(id, upload) {
                                distance_to_odor_interval = filters$odor_distance,
                                Abs_HC_Angle_interval =  filters$hc_size,
                                Abs_bearing_angle = filters$bearing_angle,
+                               spinepoint_y_6_interval = filters$spinepoint_y_6_conv,
+                               spinepoint_x_6_interval = filters$spinepoint_x_6_conv,
+                               abs_y_angle_interval = filters$abs_y_angle,
                                radius = upload()$radius,
                                frame_rate=upload()$frame_rate,
                                grouping=input$binning_mode,

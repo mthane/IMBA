@@ -221,7 +221,8 @@ calculate_tail_vector_angular_speed <-
               df$tail_vector_y[2:len])
     tail_vector_angular_speed <-
       frame_rate * clockwise_angle_v(M[, 1], M[, 2], M[, 3], M[, 4])
-    c(tail_vector_angular_speed, NA)
+    tail_vector_angular_speed = c(tail_vector_angular_speed, NA)
+    #abs_tail_vector_angular_speed <- abs(tail_vector_angular_speed, na.rm = T)
   }
 
 
@@ -238,9 +239,17 @@ calculate_head_vel_forward <- function(df, frame_rate = 16) {
   ### from Emmanouil Paisios et. al 2017 ###
   diff_x = c(diff(as.numeric(unlist(df["spinepoint_x_12_conv"]))), NA)
   diff_y = c(diff(as.numeric(unlist(df["spinepoint_y_12_conv"]))), NA)
-  frame_rate * (df['tail_vector_x'] * diff_x + df['tail_vector_x'] *
-                  diff_y) %>% unlist()
-  
+  #new after Thane et al 2023: corrected equation (the old one was using twice tail_vector_x) and added rounding
+  head_vel_forward <- 
+    frame_rate * (df['tail_vector_x'] * diff_x + df['tail_vector_y'] *
+                  diff_y)
+  npoints = round(0.3 * frame_rate)
+  if (frame_rate > 8) {
+    stats::filter(head_vel_forward,
+                  rep(1 / npoints, npoints))
+  } else{
+    head_vel_forward
+  }  
 }
 
 #' Title
@@ -307,6 +316,19 @@ calculate_bearing_angle  <-
     clockwise_angle_v(M[, 1], M[, 2], M[, 3], M[, 4])
   }
 
+#new after Thane et al. 2023
+calculate_y_angle  <-
+  function(df) {
+    y_vector_x <- 0
+    y_vector_y <- 1
+    
+    M <-
+      data.frame(df$tail_vector_x,
+                 df$tail_vector_y,
+                 y_vector_x,
+                 y_vector_y)
+    clockwise_angle_v(M[, 1], M[, 2], M[, 3], M[, 4])
+  }
 
 #' Title
 #'
@@ -566,9 +588,8 @@ calculate_run_flag <- function(df, frame_rate = 16) {
 
 calculate_step_variables <- function(df,
                                      frame_rate = 16,
-                                     threshold_tail_speed_foward = 0.6,
-                                     
-                                     threshold_tail_speed_backward = -0.4) {
+                                     threshold_tail_speed_foward = 0.3,
+                                     threshold_tail_speed_backward = -0.3) {
   # ## from Emmanouil Paisios et. al 2017 ###
   
   npoints = round(0.3 * frame_rate)
@@ -584,13 +605,29 @@ calculate_step_variables <- function(df,
 #' @export
 #'
   calculate_steps <- function(df,
-                              threshold_tail_speed_foward = 0.6 ,
-                              threshold_tail_speed_backward = -0.4,
+                              threshold_tail_speed_foward = 0.3, #new after Thane et al. 2023: reduced threshold to enable slower larvae
+                              threshold_tail_speed_backward = -0.3,
                               kind = "forward") {
     
     step_forward <- diff(sign(diff(df$tail_vel_forward))) == -2
     step_forward[which(df$tail_vel_forward < threshold_tail_speed_foward)] <- FALSE
     step_forward[is.na(step_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 3) > df$tail_vel_forward)] <- FALSE #new after Thane et al. 2023
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 4) > df$tail_vel_forward)] <- FALSE #new after Thane et al. 2023
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 5) > df$tail_vel_forward)] <- FALSE #new after Thane et al. 2023
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 6) > df$tail_vel_forward)] <- FALSE #new after Thane et al. 2023
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 7) > df$tail_vel_forward)] <- FALSE #new after Thane et al. 2023
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 8) > df$tail_vel_forward)] <- FALSE #new after Thane et al. 2023
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 9) > df$tail_vel_forward)] <- FALSE #new after Thane et al. 2023
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = 10) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -10) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -4) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -5) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -6) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -7) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -8) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -9) > df$tail_vel_forward)] <- FALSE
+    #step_forward[which(stats::lag(df$tail_vel_forward, k = -10) > df$tail_vel_forward)] <- FALSE
     
     step_backward <- rollapply(df$tail_vel_forward, 5, function(x) which.min(x) == 2)
     step_backward[which(df$tail_vel_forward > threshold_tail_speed_backward)] <-FALSE
@@ -600,6 +637,7 @@ calculate_step_variables <- function(df,
     step_boolean = rep(F,nrow(df))
     step_boolean[which(step_forward)] <- T
     step_boolean[which(step_backward)] <- T
+    #step_boolean[which(df$collision_flag > 0)] <- F #new after Thane et al. 2023
     
     step_start_idx = list()
     step_end_idx = list()
@@ -693,7 +731,8 @@ calculate_step_variables <- function(df,
                           "midpoint_distance",
                           step_start_idx,
                           function(x, y)
-                            y - x)
+                            y - x
+      )
     
     run_speed <-
       interval_mean(df,
@@ -701,6 +740,29 @@ calculate_step_variables <- function(df,
                     step_end_idx,
                     "midpoint_speed",
                     step_start_idx)
+    
+    #IS_bending <-
+     # interval_mean(df,
+      #              step_start_idx,
+       #             step_end_idx,
+        #            "abs_bending_angle",
+         #           step_start_idx)
+    
+    
+    #IS_HV_angulars <-
+     # interval_mean(df,
+      #              step_start_idx,
+       #             step_end_idx,
+        #            "abs_head_vector_angular_speed",
+         #           step_start_idx)
+    
+    #IS_TV_angulars <-
+     # interval_mean(df,
+      #              step_start_idx,
+       #             step_end_idx,
+        #            "abs_tail_vector_angular_speed",
+         #           step_start_idx)
+    
     
     extr <- interval_extr(df,
                           step_start_idx,
@@ -712,6 +774,36 @@ calculate_step_variables <- function(df,
     gt_1min <- extr$gt_1min
     minima <- extr$minima
     
+    #hextr <- head_extr (df,  #new after Thane et al. 2023
+     #                   step_start_idx,
+      #                  step_end_idx,
+     #                   step_start_idx)
+    
+    #step_hmax <- hextr$step_hmax #new after Thane et al. 2023
+    #gh_3max  <- hextr$gh_3max #new after Thane et al. 2023
+    #hmaxima  <- hextr$hmaxima #new after Thane et al. 2023
+    
+    #IS_maxhvel <-   #new after Thane et al. 2023
+     # interval_max(df,
+      #              step_start_idx,
+       #             step_end_idx,
+        #            "head_vel_forward",
+         #           step_start_idx)
+    
+   # step_tvel <- df$tail_vel_forward[which(step_boolean = T)] #new after Thane et al. 2023
+    
+    
+    
+    #headtail_interval  <-   #new after Thane et al. 2023
+     # interval_maxindex(df,
+      #             step_start_idx,
+       #            step_end_idx,
+        #           "head_vel_forward",
+         #          step_start_idx)
+    
+    #headtail_interval  <- (headtail_interval-1)/frame_rate
+
+    
   } else{
     step_boolean = rep(F, nrow(df))
     IS_angle = rep(NA, nrow(df))
@@ -720,11 +812,19 @@ calculate_step_variables <- function(df,
     IS_interval = rep(NA, nrow(df))
     IS_distance = rep(NA, nrow(df))
     run_speed = rep(NA, nrow(df))
+    #IS_bending= rep(NA, nrow(df))
+    #IS_HV_angulars= rep(NA, nrow(df))
+    #IS_TV_angulars = rep(NA, nrow(df))
     step_idx = rep(NA, nrow(df))
     step_extr = rep(NA, nrow(df))
     gt_1min = rep(NA, nrow(df))
     minima = rep(NA, nrow(df))
     run_direction= rep(NA,nrow(df))
+    #step_hmax= rep(NA,nrow(df))
+    #gh_3max= rep(NA,nrow(df))
+    #hmaxima= rep(NA,nrow(df))
+    #IS_maxhvel= rep(NA,nrow(df))
+    #headtail_interval= rep(NA,nrow(df))
   }
   return(
     data.frame(
@@ -736,13 +836,20 @@ calculate_step_variables <- function(df,
       IS_interval,
       IS_distance,
       run_speed,
+      #IS_bending,
+      #IS_HV_angulars,
+      #IS_TV_angulars,
       step_idx,
       step_extr,
       gt_1min,
       minima
+      #step_hmax,
+      #gh_3max,
+      #hmaxima,
+      #IS_maxhvel,
+      #headtail_interval
     )
   )
-  
 }
 
 
@@ -838,7 +945,6 @@ calculate_flanks <- function(track,
 }
 
 
-
 #' Title
 #'
 #' @param track 
@@ -864,6 +970,8 @@ process_track <- function(track,
                           frame_rate = 16,
                           threshold_head_vector_angular_speed = 35,
                           threshold_tail_vector_angular_speed = 45,
+                          threshold_tail_speed_foward = 0.3,
+                          threshold_tail_speed_backward = -0.3,
                           min_hc_size = 0,
                           max_hc_size = Inf,
                           spines_pairs = paste(paste("spinepoint_x", seq(1, 12), sep = "_"),
@@ -974,9 +1082,13 @@ process_track <- function(track,
     ) %>%
     mutate(abs_bending_angle = abs(bending_angle))%>%
     mutate(bearing_angle = calculate_bearing_angle(.),
-           heading_angle = calculate_heading_angle(.)) %>%
+           heading_angle = calculate_heading_angle(.),
+           y_angle = calculate_y_angle(.) #new after Thane et al. 2023
+           ) %>% 
     mutate(abs_bearing_angle = abs(bearing_angle),
-           abs_heading_angle = abs(heading_angle)) %>%
+           abs_heading_angle = abs(heading_angle),
+           abs_y_angle = abs(y_angle) #new after Thane et al. 2023
+           ) %>% 
     mutate(
       distance_to_odor =
         sqrt((spinepoint_x_6_conv - odor_a_x_rot) ^ 2 +
@@ -984,7 +1096,7 @@ process_track <- function(track,
         ),
       odor_orientation = ifelse(bearing_angle <= 90, "towards", "away"),
       odor_speed = calculate_speed_direction_odor(., frame_rate),
-      pref = ifelse(spinepoint_y_5_conv > 0, 1,-1)
+      pref = ifelse(spinepoint_y_6_conv > 0, 1,-1)
     ) 
   
   # filter out NA frames
@@ -1028,11 +1140,40 @@ process_track <- function(track,
                                  min_hc_size = min_hc_size,
                                  max_hc_size = max_hc_size)) %>%
     mutate(run_flag = calculate_run_flag(., frame_rate)) %>%
-    cbind(calculate_step_variables(., frame_rate))%>%
+    cbind(calculate_step_variables(., frame_rate, 
+                                   threshold_tail_speed_foward = 0.3,
+                                   threshold_tail_speed_backward = threshold_tail_speed_backward))%>%
     mutate(
+      #headtail_ratio = IS_maxhvel/tail_vel_forward, #new after Thane et al. 2023
+      #headtail_interval_end = IS_interval - headtail_interval,
+      #headtail_interval_min = pmin(headtail_interval, headtail_interval_end, na.rm=T),
+      #headtail_interval_ratio = headtail_interval_min/IS_interval, #new after Thane et al. 2023
       IS_distance_bl = IS_distance / mean(spine_length, na.rm =T),
       run_speed_bl = run_speed / mean(spine_length, na.rm =T)
     )%>%
     #mutate(back_to_for = calculate_switching_point(.,frame_rate,30))
-    mutate(flanks = calculate_flanks(.,frame_rate,5,5))
+    mutate(flanks = calculate_flanks(.,frame_rate,5,5))%>%
+    #new after publication
+    mutate(y_transitions = c(NA,diff(pref))) %>% 
+    mutate(y_transitions = replace_na(y_transitions, 0)) %>%
+    mutate(time_before_trans = ifelse(y_transitions != 0 | lead(y_transitions)==y_transitions, 
+                                NA, sequence(rle(as.character(y_transitions))$lengths))) %>% #new after publication
+    mutate(time_to_trans_to = (-1)*rev(ifelse(rev(y_transitions)=="2", 0, sequence(rle(rev(y_transitions))$lengths)))) %>%
+    mutate(idx = (cumsum(y_transitions == "2") - cumsum(y_transitions == "-2") - (y_transitions == "2") + (y_transitions == "-2")) == 1)%>%
+    mutate(idx2 = (cumsum(y_transitions == "-2") - cumsum(y_transitions == "2") - (y_transitions == "-2") + (y_transitions == "2")) == 0)%>%
+    mutate(time_to_trans_to = if(min(which(y_transitions =="2"))<min(which(y_transitions =="-2"))) {replace(time_to_trans_to, idx, NA)} 
+        else {replace(time_to_trans_to, idx2, NA)})%>%
+    mutate(time_to_trans_to = rev(ifelse(cumsum(rev(y_transitions)=="2")=="0",NA,rev(time_to_trans_to))))%>%
+    mutate(time_to_trans_from = (-1)*rev(ifelse(rev(y_transitions)=="-2", 0, sequence(rle(rev(y_transitions))$lengths)))) %>%
+    mutate(idx = (cumsum(y_transitions == "-2") - cumsum(y_transitions == "2") - (y_transitions == "-2") + (y_transitions == "2")) == 1)%>%
+    mutate(idx2 = (cumsum(y_transitions == "2") - cumsum(y_transitions == "-2") - (y_transitions == "2") + (y_transitions == "-2")) == 0)%>%
+    mutate(time_to_trans_from = if(min(which(y_transitions =="-2"))<min(which(y_transitions =="2"))) {replace(time_to_trans_from, idx, NA)} 
+        else {replace(time_to_trans_from, idx2, NA)})%>%
+    mutate(time_to_trans_from = rev(ifelse(cumsum(rev(y_transitions)=="-2")=="0",NA,rev(time_to_trans_from))))%>%
+    select(-starts_with("idx"))
+    #mutate(time_to_trans_to = rev(replace(rev(time_to_trans_to), cumall(rev(time_to_trans_to) !=0), NA)))
+    #mutate(streak_ID = as.integer(factor(cumsum(as.logical(replace_na(y_transitions,0))))))
+    #mutate(frame_align_to = frame - aggregate(which(y_transitions=="2" & lag(time_before_trans)>80),by=list(df$id),FUN=first))
+    #df[!is.na(df$IS_interval),]
 }
+

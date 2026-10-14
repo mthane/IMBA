@@ -112,7 +112,7 @@ plot_timeseries <- function(track,
   min_time = min(data_pivot$time,na.rm=T)
   max_time = max(data_pivot$time,na.rm=T)
   #build plot
-  manual_colors = c("#000000",RColorBrewer::brewer.pal(8,"Set2"))
+  manual_colors = c("#0000FF", "#000000",RColorBrewer::brewer.pal(8,"Set1"))
   
   p <- ggplot(data_pivot, aes(x = time, y = value,color=variable)) +
     geom_line(alpha=0.8)+
@@ -170,9 +170,10 @@ plot_timeseries <- function(track,
     }
     df_steps <- data%>%
       filter(step_boolean==T)%>%
-      mutate(idx = frame/frame_rate)%>%
+      mutate(idx = (1+frame)/frame_rate)%>% 
       select(idx,id_gc)
-  
+# new after Thane et al 2023: added a +1 to correct for a shifted display
+    
     if(nrow(df_steps)>0){
       p<- p+ geom_vline(
         data = df_steps,
@@ -439,6 +440,22 @@ binning_data_plot <- function(data,
   
   if(x=="frame"){
     xvariable_name <- "Time [s]"
+  }
+  
+  if(x=="time_to_trans_to"){
+    xvariable_name <- "Time until next transition [s]"
+  }
+  
+  if(x=="time_to_trans_from"){
+    xvariable_name <- "Time until next transition [s]"
+  }
+  
+  if(x=="spinepoint_y_6_conv"){
+    xvariable_name <- "Y coordinate"
+  }
+  
+  if(x=="spinepoint_x_6_conv"){
+    xvariable_name <- "X coordinate"
   }
   
   if(y %in% ci_vars | binning_mode!="all"){

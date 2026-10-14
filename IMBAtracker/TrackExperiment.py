@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from distutils.filelist import FileList
 
-LRVTRACK = './IMBAtracker/lrvTrack.AppImage'
+LRVTRACK = './IMBtracker_cpp/lrvTrack'
 LRVTRACK = os.path.abspath(LRVTRACK)
 TMPDIR = '/tmp'
 #from TrackUI import Ui_TrackExperiment
@@ -110,10 +110,6 @@ class trackWorker(QtCore.QObject):
 
             print("start tracking")
             print(trial_path)
-            trial_path = trial_path.replace("\\", "/")
-            
-            video_path = video_path.replace("\\", "/")
-            print(trial_path)
             command = ' '.join([LRVTRACK,
                         '-x', # offline background computation
                         '-z', # dish size set below
@@ -122,7 +118,7 @@ class trackWorker(QtCore.QObject):
                         ['--min-obj-size', #min size of blob
                         str(min_size),
                         '--max-obj-size', #max size of blob
-                        str(5000)] +
+                        str(10000)] +
                         # ROI if specified
                         ROIlist +
                         collisionlist + [
@@ -142,6 +138,7 @@ class trackWorker(QtCore.QObject):
                         '-i',
                         video_path]
                         )
+            print(command)
 
             with open(trial_path+"/stdout.log","wb") as out, open(trial_path+"/stderr.log","wb") as err:
                 process = subprocess.Popen(command, 
@@ -156,22 +153,19 @@ class trackWorker(QtCore.QObject):
             #ctid = self.currentTrackingID
             output_path = self.outputPath
             if exitCode==0:
-                print("test")
-                print(output_path+"/"+subfolder)
                 if not os.path.exists(output_path + '/' + subfolder):
-                    os.makedirs(output_path + '/' + subfolder)
+                    os.makedirs(output_path + '/' + subfolder + '/vidAndLogs')
 
-                vidsAndLogsPath = output_path + '/' + subfolder
+                vidsAndLogsPath = output_path + '/' + subfolder + '/vidAndLogs'
                 real_output = output_path + '/' + subfolder
+                print(vidsAndLogsPath)
+                print(real_output)
                 # Copy files to output folder
                 try:
                     #print("Metadata:")
                     #print("")
-                    print("copy metadata")
                     cm = subprocess.call(['cp ' + trial_path + '/metadata.txt ' + vidsAndLogsPath],shell=True)
-                    print("move stdout.log")
                     co = subprocess.call(['mv ' + trial_path + '/stdout.log ' + vidsAndLogsPath],shell=True)
-                    print("move stderr.log")
                     ce = subprocess.call(['mv ' + trial_path + '/stderr.log ' + vidsAndLogsPath],shell=True)
                     cd = subprocess.call(['mv ' + trial_path + '/*-data/* ' + real_output],shell=True)
                     cv = subprocess.call(['mv ' + trial_path + '/2*.mp4 '  + vidsAndLogsPath],shell=True)
@@ -284,9 +278,9 @@ class trackApp(QMainWindow, Ui_MainWindow):
         # Our operations on the frame come here
         #image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         cv_image = self.cv_image
-        print(cv_image)
-        h, w, _ = cv_image.shape
-        image = QImage(cv_image, w, h, 3 * w,
+        image = QImage(cv_image, cv_image.shape[1],\
+                                 cv_image.shape[0],
+                                 cv_image.shape[1] * 3.0,
                                  QImage.Format_RGB888)
         if self.ROIRspinbox.value() == 0:
             #print("Setting initial ROI values")
@@ -294,9 +288,9 @@ class trackApp(QMainWindow, Ui_MainWindow):
             self.ROI_x = cv_image.shape[0]/2
             self.ROI_y = cv_image.shape[1]/2
             self.ROI_r = 0.9 * minDIM/2
-            self.ROIXspinbox.setValue(int(self.ROI_x))
-            self.ROIYspinbox.setValue(int(self.ROI_y))
-            self.ROIRspinbox.setValue(int(self.ROI_r))
+            self.ROIXspinbox.setValue(self.ROI_x)
+            self.ROIYspinbox.setValue(self.ROI_y)
+            self.ROIRspinbox.setValue(self.ROI_r)
         pix = QPixmap(image)
         if self.zoomCheckbox.isChecked():
             self.framePixmap = pix
@@ -419,8 +413,6 @@ class trackApp(QMainWindow, Ui_MainWindow):
         for video in self.experiment_videos:
             trial_name = QStandardItem(
             os.path.basename(os.path.dirname(video)))
-            print(trial_name)
-            print(video)
             rec_name = QStandardItem(
                 os.path.basename(os.path.dirname(
                                  os.path.dirname(

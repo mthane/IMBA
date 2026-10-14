@@ -209,6 +209,57 @@ interval_mean <-
     result
   }
 
+interval_max <- #new after Thane et al. 2023
+  function(df,
+           start_idx,
+           end_idx,
+           measurement,
+           centers) {
+    values <- list()
+    steps <- data.frame(start_idx, end_idx)
+    if (is.null(start_idx) | is.null(end_idx)) {
+      values <- NA
+    } else{
+      #iterate over the steps
+      for (idx in  1:nrow(steps)) {
+        step_measure <-
+          df[steps[idx,]$start_idx:steps[idx,]$end_idx, measurement]
+        values[[idx]] <- max(step_measure, na.rm = T)
+      }
+    }
+    values <- unlist(values)
+    result <- rep(NA, nrow(df))
+    if (length(values) > 0) {
+      result[unlist(centers)] <- values
+    }
+    result
+  }
+
+interval_maxindex <- #new after Thane et al. 2023
+  function(df,
+           start_idx,
+           end_idx,
+           measurement,
+           centers) {
+    values <- list()
+    steps <- data.frame(start_idx, end_idx)
+    if (is.null(start_idx) | is.null(end_idx)) {
+      values <- NA
+    } else{
+      #iterate over the steps
+      for (idx in  1:nrow(steps)) {
+        step_measure <-
+          df[steps[idx,]$start_idx:steps[idx,]$end_idx, measurement]
+        values[[idx]] <- which.max(step_measure)
+      }
+    }
+    values <- unlist(values)
+    result <- rep(NA, nrow(df))
+    if (length(values) > 0) {
+      result[unlist(centers)] <- values
+    }
+    result
+  }
 
 #' Title
 #'
@@ -249,8 +300,8 @@ interval_extr <-
         
         nmin = NA
         if (length(step_measure) > 5) {
-          x = ma(diff(step_measure))
-          xz <- as.zoo(x)
+          x = ma(diff(step_measure)) #ma: moving average
+          xz <- as.zoo(x) #zoo: ordered objects
           extr <-
             c(NA, rollapply(xz, window, function(x)
               which.min(x) == 2), NA)
@@ -308,7 +359,82 @@ interval_extr <-
     data.frame(step_index, step_extr, gt_1min, minima)
   }
 
-
+head_extr <- #new after Thane et al. 2023
+  function(df,
+           start_idx,
+           end_idx,
+           centers,
+           window = 5) {
+    values <- list()
+    
+    steps <- data.frame(start_idx, end_idx)
+    
+    ## boolean for the "minima" > 1 minimum
+    gh_3max <- rep(NA, nrow(df))
+    hmaxima <- rep(NA, nrow(df))
+    step_hmax <- rep(NA, nrow(df))
+    step_index <- rep(NA, nrow(df))
+    total = 0
+    if (is.null(start_idx) | is.null(end_idx)) {
+      values <- NA
+    } else{
+      #iterate over the steps
+      for (idx in  1:nrow(steps)) {
+        step_index[steps[idx,]$start_idx:steps[idx,]$end_idx] <- idx
+        step_measure <-
+          df[steps[idx,]$start_idx:steps[idx,]$end_idx, "head_vel_forward"]
+        
+        nmax = NA
+        if (length(step_measure) > 5) {
+          x = ma(diff(step_measure)) #ma: moving average
+          xz <- as.zoo(x) #zoo: ordered objects
+          extr <-
+            c(NA, rollapply(xz, window, function(x)
+              which.max(x) == 2), NA)  #list with all frames of IS with local maxima = T
+          nmax <- sum(extr, na.rm = T) #number of local maxima in IS
+          values[[idx]] <- nmax
+        } else{
+          xz <- as.zoo(step_measure)
+          if(length(step_measure)>2){
+            extr <-
+              c(NA, rollapply(xz, 3, function(x)
+                which.max(x) == 2), NA)
+            
+            nmax <- sum(extr, na.rm = T)
+            values[[idx]] <- nmax
+          }else{
+            values[[idx]] <- NA
+          }
+        }
+        total = total + length(step_measure)
+        if (!is.na(nmax)) {
+            if (nmax == 0 | nmax == 1 | nmax == 2 | nmax == 3) {
+            hmaxima[steps[idx,]$start_idx:steps[idx,]$end_idx] <- nmax
+            gh_3max[steps[idx,]$start_idx:steps[idx,]$end_idx] <-
+              F
+            
+          } else{
+            hmaxima[steps[idx,]$start_idx:steps[idx,]$end_idx] <-  ">3"
+            gh_3max[steps[idx,]$start_idx:steps[idx,]$end_idx] <- T
+          }
+        } else{
+          hmaxima[steps[idx,]$start_idx:steps[idx,]$end_idx] <- NA
+          gh_3max[steps[idx,]$start_idx:steps[idx,]$end_idx] <- NA
+        }
+        
+        
+      }
+    }
+    
+    values <- unlist(values)
+    gh_3max <- unlist(gh_3max)
+    hmaxima <- unlist(hmaxima)
+    if (length(values) > 0) {
+      step_hmax[unlist(centers)] <- values
+    }
+    
+    data.frame(step_hmax, gh_3max, hmaxima)
+  }
 
 #' Title
 #'

@@ -28,6 +28,9 @@ binning_data <- function(df,
                          distance_to_odor_interval=c(0,Inf),
                          Abs_HC_Angle_interval=c(0,360),
                          Abs_bearing_angle=c(0,360),
+                         spinepoint_y_6_interval =c(-50,50),
+                         spinepoint_x_6_interval =c(-50,50),
+                         abs_y_angle_interval =c(0,360),
                          radius=42.5,
                          frame_rate= 16,
                          direction = NULL
@@ -39,14 +42,29 @@ binning_data <- function(df,
     width = width*frame_rate
   }
   
+  if (variable == "time_to_trans_to") {#new after publication
+    width = width*frame_rate
+  }
+  
+  if (variable == "time_to_trans_from") {#new after publication
+    width = width*frame_rate
+  }
+  
+
   radius = as.numeric(radius)
   df <- df %>% filter(
     frame %in% seq(from = frame_interval[1] * frame_rate,
                    to = frame_interval[2] * frame_rate) &
       distance_to_odor >= distance_to_odor_interval[1] &
       distance_to_odor <= distance_to_odor_interval[2] &
-      abs(bearing_angle) >= Abs_bearing_angle[1]&
-      abs(bearing_angle) <= Abs_bearing_angle[2]
+      abs(bearing_angle) >= Abs_bearing_angle[1] &
+      abs(bearing_angle) <= Abs_bearing_angle[2] &
+      spinepoint_y_6_conv >= spinepoint_y_6_interval[1] &
+      spinepoint_y_6_conv <= spinepoint_y_6_interval[2] &
+      spinepoint_x_6_conv >= spinepoint_x_6_interval[1] &
+      spinepoint_x_6_conv <= spinepoint_x_6_interval[2] &
+      abs_y_angle >= abs_y_angle_interval[1] &
+      abs_y_angle <= abs_y_angle_interval[2] 
   )
   
   #direction filter
@@ -75,6 +93,15 @@ binning_data <- function(df,
     data$midpoint = data$midpoint / frame_rate
   }
   
+  if (variable == "time_to_trans_to") {#new after publication
+    data$midpoint = data$midpoint / frame_rate
+  }
+  
+  if (variable == "time_to_trans_from") {#new after publication
+    data$midpoint = data$midpoint / frame_rate
+  }
+  
+
   it = toc()
   exectime <- it$toc - it$tic
   message(paste("data binning... ", exectime , " seconds elapsed", sep =
@@ -112,6 +139,9 @@ binning_data_grouped <- function(df,
                                  distance_to_odor_interval=c(0,Inf),
                                  Abs_HC_Angle_interval=c(0,360),
                                  Abs_bearing_angle=c(0,360),
+                                 spinepoint_y_6_interval =c(-50,50),
+                                 spinepoint_x_6_interval =c(-50,50),
+                                 abs_y_angle_interval =c(0,360),
                                  radius=42.5,
                                  frame_rate= 16,
                                  grouping="id",
@@ -127,7 +157,13 @@ binning_data_grouped <- function(df,
       distance_to_odor >= distance_to_odor_interval[1] &
       distance_to_odor <= distance_to_odor_interval[2] &
       abs(bearing_angle) >= Abs_bearing_angle[1]&
-      abs(bearing_angle) <= Abs_bearing_angle[2]
+      abs(bearing_angle) <= Abs_bearing_angle[2]&
+      spinepoint_y_6_conv >= spinepoint_y_6_interval[1] &
+      spinepoint_y_6_conv <= spinepoint_y_6_interval[2] &
+      spinepoint_x_6_conv >= spinepoint_x_6_interval[1] &
+      spinepoint_x_6_conv <= spinepoint_x_6_interval[2] &
+      abs_y_angle >= abs_y_angle_interval[1] &
+      abs_y_angle <= abs_y_angle_interval[2] 
   )
   
   #direction filter
@@ -154,6 +190,16 @@ binning_data_grouped <- function(df,
   if (variable == "frame") {
     data$midpoint = data$midpoint / frame_rate
   }
+  
+  if (variable == "time_to_trans_to") {#new after publication
+    data$midpoint = data$midpoint / frame_rate
+  }
+  
+  if (variable == "time_to_trans_from") {#new after publication
+    data$midpoint = data$midpoint / frame_rate
+  }
+  
+
   it = toc()
   exectime <- it$toc - it$tic
   message(paste("data binning... ", exectime , " seconds elapsed", sep =
@@ -222,6 +268,13 @@ binning_data_ts <-   function(df,
       abs_heading_angle.lowCI = ci(abs(heading_angle), na.rm = T)[2],
       abs_heading_angle.hiCI = ci(abs(heading_angle), na.rm = T)[3],
       abs_heading_angle.mean = mean(abs(heading_angle),na.rm=T),
+
+      y_angle.lowCI = ci(y_angle, na.rm = T)[2],
+      y_angle.hiCI = ci(y_angle, na.rm = T)[3],
+      y_angle.mean = mean(y_angle,na.rm=T),
+      abs_y_angle.lowCI = ci(abs(y_angle), na.rm = T)[2],
+      abs_y_angle.hiCI = ci(abs(y_angle), na.rm = T)[3],
+      abs_y_angle.mean = mean(abs(y_angle),na.rm=T),
       
       bending_angle.lowCI = ci(bending_angle, na.rm = T)[2],
       bending_angle.hiCI = ci(bending_angle, na.rm = T)[3],
@@ -230,6 +283,14 @@ binning_data_ts <-   function(df,
       abs_bending_angle.lowCI = ci(abs(bending_angle), na.rm = T)[2],
       abs_bending_angle.hiCI = ci(abs(bending_angle), na.rm = T)[3],
       abs_bending_angle.mean = mean(abs(bending_angle),na.rm=T),
+      
+      head_vector_y.lowCI = ci(head_vector_extended_y, na.rm = T)[2],
+      head_vector_y.hiCI = ci(head_vector_extended_y, na.rm = T)[3],
+      head_vector_y.mean = mean(head_vector_extended_y,na.rm=T),
+      
+      head_vector_x.lowCI = ci(head_vector_extended_x, na.rm = T)[2],
+      head_vector_x.hiCI = ci(head_vector_extended_x, na.rm = T)[3],
+      head_vector_x.mean = mean(head_vector_extended_x,na.rm=T),
       
       head_vector_angular_speed.lowCI = ci(head_vector_angular_speed, na.rm = T)[2],
       head_vector_angular_speed.hiCI = ci(head_vector_angular_speed, na.rm = T)[3],
