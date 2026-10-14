@@ -1,55 +1,76 @@
 # IMBA 1.0 — Individual Maggot Behavior Analyzer
 
-IMBA tracks individual *Drosophila* larvae in a group, including through collisions, and was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3)).
+IMBA tracks individual *Drosophila* larvae in a group, including through collisions, and analyzes the resulting trajectories. It was used for Toshima et al., 2026, *eLife* (DOI: [10.7554/eLife.106148.3](https://doi.org/10.7554/eLife.106148.3)).
 
-The tracker is the original C++ program `lrvTrack` in `IMBAtracker/IMBtracker_cpp`. This recovery runs that program, unmodified, in Docker. It does not implement the unfinished Python package `imba_tracker` that exists on `origin/main`. That package detects blobs per frame and does not link identities or resolve collisions.
+Three programs make up a run:
 
-There is no `LICENSE` file in this repository. One was not added here; that choice belongs to the rights holders. The build unpacks the bundled `cvblob` sources (`IMBAtracker/IMBtracker_cpp/cvblob.zip`), which carry their own notices.
+1. **lrvTrack** tracks a video and writes one CSV per larva, plus an overlay video.
+2. **TrackExperiment.py** is the PyQt window for a whole experiment. It calls the same tracker and arranges the files for analysis.
+3. **IMBAvisualizer** is the Shiny app that reads those CSVs and computes behavioral measures.
 
-## Prerequisites
+This repository has no `LICENSE` file. The tracker build unpacks `IMBAtracker/IMBtracker_cpp/cvblob.zip`, which carries its own notices.
+
+## What you need
 
 - Docker Engine and Docker Compose v2.
-- On Windows, [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) with the WSL2 backend. The same `compose.yaml` works if you invoke `docker` from PowerShell or from a WSL distribution.
-- A raw video on the host. This recovery was checked with `data/input/example_video.mp4` (80 frames, 2048×2048, 16 fps), taken from the repository history (`legacy/data/example_video.mp4` on `origin/main`). It is not stored in git.
+- On Windows, [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) with the WSL2 backend. Run the commands below from PowerShell or from WSL; both use the same `compose.yaml`.
+- Your raw video. Put a copy at `data/input/example_video.mp4`, or set `IMBA_VIDEO` to another filename in `data/input`. Videos are not stored in git.
 
-The image is Ubuntu 18.04, the system named in the original install notes and in the historical Dockerfile. That release supplies the OpenCV 3.2 headers this source was written against (`CV_CAP_PROP_*`, `CV_FOURCC`, and related names).
+All commands below are run from the repository root.
 
-| Package | Version in the image | Role |
-|---|---|---|
-| g++ / cmake | GCC 7.4, CMake 3.10 | Build |
-| libopencv-dev | 3.2.0+dfsg-4ubuntu0.1 | Video I/O and image processing |
-| libboost-all-dev | 1.65.1 | Program options, filesystem, log |
-| libalglib-dev | 3.11.0 | Spine fitting |
-| liblpsolve55-dev | 5.5.0.15 | Identity assignment |
-| libtbb-dev | 2017 U7 | Parallel blob update |
-| cvblob (bundled zip) | sources in `cvblob.zip` | Connected components |
+## Track one video
 
-`libtbb-dev` is required by `CMakeLists.txt` (`find_package(TBB REQUIRED)`). The original `setup.sh` does not install it. No MATLAB or GPU is required. The batch command does not open a window. The PyQt program `IMBAtracker/TrackExperiment.py` is a wrapper that shells out to `lrvTrack`; how to launch it is in [Track through the GUI](#track-through-the-gui). The Shiny app in `IMBAvisualizer/shiny_app` reads the resulting tables; it does not track. See [IMBAvisualizer](#imbavisualizer).
-
-## Build
-
-From the repository root:
+Build the tracker image once:
 
 ```bash
-docker compose build
+docker compose build tracker
 ```
 
-The image is tagged `imba-lrvtrack:1.0`. Videos are not copied into the image.
-
-## Input and output mounts
-
-| Host | Container | Access |
-|---|---|---|
-| `./data/input` | `/data/input` | read-only |
-| `./data/output` | `/data/output` | read/write |
-| `./config` | `/app/config` | read-only |
-
-Put the video in `data/input`. `lrvTrack` writes its result files in the process working directory. The container entrypoint `cd`s to `/data/output` before exec, so the dated overlay and CSV directory appear on the host. The input mount stays read-only.
-
-Large collections can stay outside the repository:
+The image is `imba-lrvtrack:1.0` (Ubuntu 18.04, OpenCV 3.2). Then track the video in `data/input`:
 
 ```bash
-# Linux / WSL
+docker compose run --rm tracker
+```
+
+That runs:
+
+```text
+lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r . -i /data/input/example_video.mp4
+```
+
+| Flag | Meaning |
+|---|---|
+| `-z` | Petri-dish diameter in millimetres. `138` is the 15 cm dish. `84` is the 9 cm dish. |
+| `-v` | Frames per second. |
+| `-i` | Video path inside the container. |
+| `--min-obj-size`, `--max-obj-size` | Blob area limits, in pixels. |
+
+Files are exchanged through these folders:
+
+| On your computer | In the container | Access |
+|---|---|---|
+| `data/input` | `/data/input` | read-only |
+| `data/output` | `/data/output` | read/write |
+| `config` | `/app/config` | read-only |
+
+`data/output` must exist before you run. Results appear there, named with the time of the run:
+
+- `YYYYMMDD_HHMMSS_PROC.mp4` — the video with the dish circle, frame number, and larva ids.
+- `YYYYMMDD_HHMMSS-data/<id>.csv` — one file per larva that was tracked as an individual.
+
+Each CSV row is one frame: frame index, spine and body-outline coordinates in millimetres (origin at the dish centre), centroid, ellipse angle, area in pixels, grey value, length, width, perimeter, a round flag, and millimetres per pixel. A coordinate pair can be `na` when head and tail could not be ordered.
+
+Larvae whose area is above 6 mm² are treated as clusters. They are drawn on the overlay and omitted from the CSV files. The millimetre scale comes from `-z`, so the diameter has to match the dish in the video. For a 9 cm dish, pass the small-dish preset:
+
+```bash
+docker compose run --rm tracker -x -z 84 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r . -i /data/input/example_video.mp4
+```
+
+PowerShell does not continue lines with a backslash. Put that command on one line.
+
+To point at videos stored outside this repository:
+
+```bash
 export IMBA_INPUT_DIR=/data/larva/raw
 export IMBA_OUTPUT_DIR=/data/larva/tracked
 export IMBA_VIDEO=trial01.mp4
@@ -57,81 +78,25 @@ docker compose run --rm tracker
 ```
 
 ```powershell
-# Windows PowerShell
 $env:IMBA_INPUT_DIR = "D:\larva\raw"
 $env:IMBA_OUTPUT_DIR = "D:\larva\tracked"
 $env:IMBA_VIDEO = "trial01.mp4"
 docker compose run --rm tracker
 ```
 
-On Linux, files created in the output mount are owned by the container user (root unless you override it):
+On Linux, output files are owned by root unless you set your user id:
 
 ```bash
 IMBA_UID="$(id -u)" IMBA_GID="$(id -g)" docker compose run --rm tracker
 ```
 
-Docker Desktop on Windows already exposes those files to your Windows user.
+`config/metadata.txt` is a sample trial file (odor side and frame rate). The command above does not read it. If you add `--metadata-file`, copy the file into `data/output` first: when the odor side is `left` or `right`, lrvTrack writes the cup coordinates back into that file.
 
-`config/metadata.txt` is the sample trial file that was stored next to the example video (odor side and FPS). The default command does not read it. If you pass `--metadata-file`, copy that file into the writable output directory first: with an odor side of `left` or `right`, `lrvTrack` writes cup coordinates back into the metadata file, and `/app/config` is read-only.
+## Track an experiment from the GUI
 
-## Run the example video
+Use the GUI when you have the usual experiment tree and want files laid out for IMBAvisualizer. Build the tracker image first (`docker compose build tracker`). The window calls `IMBAtracker/IMBtracker_cpp/lrvTrack`, which starts that image. A native `make` in `IMBtracker_cpp` replaces this launcher with the compiled program; check the file back out from git if you need the Docker launcher again.
 
-```bash
-docker compose build
-docker compose run --rm tracker
-```
-
-That is the command recorded in the original README, with container paths:
-
-```text
-lrvTrack -x -z 138 --min-obj-size 110 --max-obj-size 5000 -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r . -i /data/input/example_video.mp4
-```
-
-`-z` is the petri-dish diameter in millimetres. The original GUI also has a small-dish preset of 84 mm. On this example clip, `-z 138` scales every segmented animal above the program's 6 mm² cluster cutoff (`blob area × mm_per_pixel²`), so `lrvTrack` keeps four identities and draws them on the overlay, but it does not write spine CSV files. `-z 84` puts three of the four under that cutoff. Their lengths are then about 4.1–4.5 mm, which is a plausible larval body length. The fourth object stays above 6 mm² and is still treated as a cluster. To emit those trajectories:
-
-```bash
-docker compose run --rm tracker \
-  -x -z 84 --min-obj-size 110 --max-obj-size 5000 \
-  -p --thread-count 9 -o -v 16 -d 13 -w 0.04 -u -t -r . \
-  -i /data/input/example_video.mp4
-```
-
-PowerShell does not use backslash continuation. Pass the same arguments on one line.
-
-Dish diameter changes the millimetre scale. It does not change the tracking source.
-
-## Expected output
-
-In `data/output` (names use the run's local timestamp):
-
-- `YYYYMMDD_HHMMSS_PROC.mp4` — input frames with the detected dish circle, frame index, and larva ids.
-- `YYYYMMDD_HHMMSS-data/<id>.csv` — one file per animal that the original rules did not mark as a cluster.
-
-Each CSV row is one frame. Fields, in order:
-
-1. Frame index.
-2. Spine and body-outline coordinates in millimetres, origin at the dish centre, y flipped so image-down is negative.
-3. Centroid x, y (mm), ellipse angle, area (pixels), grey value, length, width, perimeter (mm), round flag, and millimetres per pixel.
-
-A row can contain `na` pairs when head and tail cannot be ordered. Animals classified as clusters are omitted from this CSV; their ids are still drawn on the overlay when the tag pass runs.
-
-Logs from a redirected run (`stdout.log`, `stderr.log`) are optional and are not written by `lrvTrack` itself.
-
-## What was checked
-
-On `example_video.mp4` the unmodified binary finished both passes (`FINISHED!!!`).
-
-With `-z 138` it found one dish circle (centre 935, 1027 px, radius 634.56 px, 0.1087 mm/px) and kept identities 1–4 for all 80 frames. No spine CSV was written, because each blob was over 6 mm². That is the original cutoff, not a failed write.
-
-With `-z 84` (0.0662 mm/px) it wrote `1.csv`, `2.csv`, and `3.csv`, 80 rows each. Centroids stay inside the 42 mm dish radius, lengths are about 4.1–4.5 mm, widths about 1 mm, and the recorded millimetres-per-pixel match `84 / (2 × 634.56)`. Identity 4 remained a cluster and has no CSV.
-
-No historical result files were in this branch to compare against. A log saved on `origin/main` (`legacy/tracker_cpp/stdout.log`, 2024-05-13) stops at "Error setting up the capture device" after a Windows path (`C:/Users/.../example_video.mp4`) was given to the Linux binary. This recovery does not claim numerical equivalence to a published figure.
-
-## Track through the GUI
-
-`IMBAtracker/TrackExperiment.py` is the original PyQt5 window. It does not link larvae itself. It builds the same `lrvTrack` command and runs `IMBAtracker/IMBtracker_cpp/lrvTrack`. That path is a small launcher script: it `docker run`s the `imba-lrvtrack:1.0` binary, with the trial directory as the working directory, and passes the GUI's arguments through. Build the tracker image before opening the window (`docker compose build tracker`). A native `make` in `IMBtracker_cpp` overwrites the launcher with an ELF binary; restore the script from git if that happens.
-
-The window was run from WSL (Ubuntu 22.04) with `python3-pyqt5`, `python3-opencv`, and Docker. WSLg supplies the display:
+On Windows, start the window from WSL (Ubuntu 22.04) with Python, PyQt5, OpenCV, and Docker available (`python3-pyqt5`, `python3-opencv`). WSLg provides the display:
 
 ```bash
 cd IMBAtracker
@@ -142,65 +107,78 @@ export QT_QPA_PLATFORM=xcb
 python3 TrackExperiment.py
 ```
 
-`XDG_RUNTIME_DIR` is owned by the normal WSL user. A Qt warning is printed if the process is root; the window still opens.
-
-Point the file list at a video nested four directories deep. The folder names become Experiment, Group, Reciprocal, and Trial:
+Place each video four folders deep. Those folder names become the experiment, group, reciprocal, and trial:
 
 ```text
 data/gui_experiment/ExampleExp/GroupA/Rec1/Trial1/example_video.mp4
 data/gui_experiment/ExampleExp/GroupA/Rec1/Trial1/metadata.txt
 ```
 
-Choose an output directory, for example `data/gui_output`. The dish radios are the original presets: **15 cm** is 138 mm (the default), **9 cm (Normal)** is 84 mm. On `example_video.mp4`, 9 cm is the preset that writes spine CSVs. **Track!!** runs one video at a time.
+In the window, add that video, choose an output folder such as `data/gui_output`, and pick the dish. **15 cm** is 138 mm and is selected by default. **9 cm (Normal)** is 84 mm. Press **Track!!**. One video is tracked at a time.
 
-After a zero exit code the GUI copies `metadata.txt` and the logs into `output/Group/Reciprocal/Trial/vidAndLogs`, moves `*-data/*.csv` up into the trial folder, and moves the overlay `2*.mp4` into `vidAndLogs`. That tree is what IMBAvisualizer reads. A checked run of this clip wrote `data/gui_output/GroupA/Rec1/Trial1/1.csv`, `2.csv`, and `3.csv`, plus the overlay and logs.
-
-The GUI then runs `bash createCollisionsCSVinExperiment.sh` on the stdout log. Those shell scripts must be LF, not CRLF, or bash reports `unexpected end of file`. The script's last step calls `Rscript`, which is not part of the tracker image. Tracking has already finished by then; a missing `Rscript` does not change the CSVs.
-
-## IMBAvisualizer
-
-The app that runs is `IMBAvisualizer/shiny_app` (`ui.R`, `server.R`, `global.R`, and `r_files/`). `global.R` sources those scripts directly. The old golem package (`R/`, `DESCRIPTION`, `NAMESPACE`, and `imba::run_app()`) is kept under `IMBAvisualizer/legacy` and is not part of this pipeline. The app does not call `lrvTrack`. It reads a directory of digit-named CSVs (`1.csv`, `2.csv`, …) laid out as:
+When tracking finishes, the GUI writes:
 
 ```text
-<experiment>/<group>/<condition>/<trial>/<id>.csv
-<experiment>/<group>/<condition>/<trial>/vidAndLogs/metadata.txt
+data/gui_output/GroupA/Rec1/Trial1/1.csv
+data/gui_output/GroupA/Rec1/Trial1/2.csv
+data/gui_output/GroupA/Rec1/Trial1/vidAndLogs/metadata.txt
+data/gui_output/GroupA/Rec1/Trial1/vidAndLogs/<timestamp>_PROC.mp4
 ```
 
-The GUI output above matches this when the chosen directory is the parent of the group folder (`data/gui_output`, not the trial folder and not `data/` itself). The CLI writer does not build that tree. To plot a CLI run, copy `YYYYMMDD_HHMMSS-data/*.csv` into a `group/condition/trial/` folder and put `metadata.txt` in that trial's `vidAndLogs/`.
+It then runs `createCollisionsCSVinExperiment.sh` on the tracker log. That step needs `Rscript` on the machine where the GUI is running. The CSVs and the overlay are already in place if that script stops.
 
-`metadata.txt` is INI. Cup coordinates are the sixth data row (`OdorALocation=x, y`), which `lrvTrack` appends when `--metadata-file` is set and the odor side is left or right. The sample file has no coordinates, so the odor position stays `(0, 0)`.
+## Analyze tracks
 
-Each CSV row ends with millimetres-per-pixel after the collision flag. The reader keeps the columns it names (through `collision_flag`) and ignores that extra field. Contour columns 26–69 are the body outline; **Drop contours** leaves the 12 spine points.
-
-Dish radius presets in the app are **42.5 mm** (the 84 mm / 9 cm dish) and **69 mm** (the 138 mm dish). Frames per second defaults to 16. **Video length** defaults to 180 seconds, which matches a 3-minute recording and is stored with the result. **Analyze!** keeps a track when it has more than `round(FPS / 0.5)` frames (32 frames at 16 fps). The 80-frame example passes. The later accepted-track view treats the threshold as seconds (default 90). Set that threshold below the clip length, or those 5-second tracks are counted as not accepted.
-
-Build and open the app:
+IMBAvisualizer reads the folder tree the GUI writes. Build it once and start it:
 
 ```bash
 docker compose build visualizer
 docker compose up visualizer
 ```
 
-Then open `http://localhost:3838`. The base directory defaults to `/data/` inside the container (`IMBA_DATA_ROOT`). The whole `./data` tree is mounted there (`IMBA_DATA_DIR` overrides the host path). Choose `gui_output`, set the radius to 42.5 for the 9 cm example, and leave frames per second at 16. Analyzed CSV and RDS files are written under the selected parent, on the host mount.
+Open [http://localhost:3838](http://localhost:3838). The image is `imba-visualizer:1.0`. The app lives in `IMBAvisualizer/shiny_app`. An older packaged copy of the same scripts is kept in `IMBAvisualizer/legacy` and is not what this service starts.
 
-The same function the button calls can be run without the window, against the GUI output of this clip:
+In **Analysis Processing**:
 
-```bash
-docker compose run --rm --entrypoint Rscript visualizer -e \
-  'source("global.R"); dir.create("/data/analysis/example", recursive=TRUE, showWarnings=FALSE); process_data_dt(input_dir="/data/gui_output", output_dir="/data/analysis/example", save_as="example", radius=42.5, drop_contours=TRUE, frame_rate=16, video_length=5)'
+1. Leave **Base directory** at `/data/` (that is the `data` folder of this repository, inside the container). `IMBA_DATA_DIR` changes which host folder is mounted there.
+2. Choose `gui_output`. That directory is the parent of the group folders. The trial folder and `data` itself are the wrong level.
+3. Set the dish radius to **42.5 mm** for a 9 cm dish, or **69 mm** for a 15 cm dish.
+4. Set **Frames per second** to the rate used in tracking (16 for the bundled example).
+5. Set **Video length** to the length of the recording in seconds. The default, 180, matches a 3-minute video.
+6. Press **Analyze!**.
+
+The app looks for:
+
+```text
+<experiment>/<group>/<condition>/<trial>/<id>.csv
+<experiment>/<group>/<condition>/<trial>/vidAndLogs/metadata.txt
 ```
 
-That runs in `/opt/imba/shiny_app`, the image working directory, so `global.R` finds `r_files/` and `global_variables.Rds`. `IMBAvisualizer/legacy/setup.sh` is the old interactive Ubuntu 18.04 + R 4.0 package install. The image is the non-interactive path for `shiny_app`. It uses R 4.5 so current CRAN builds of the libraries in `global.R` install; the analysis scripts are the ones in `shiny_app/r_files`.
+`metadata.txt` is an INI file. When tracking was given `--metadata-file` and the odor side is left or right, lrvTrack appends `OdorALocation=x, y`. Without that line the odor position used in the analysis is `(0, 0)`.
 
-## Troubleshooting
+**Analyze!** keeps a track that is longer than half a second (`round(frames per second / 0.5)` frames). On the **Accepted tracks** tab the threshold is in seconds and starts at 90. Lower it when the recording is shorter than that, or the tracks are listed as not accepted.
 
-- **Error setting up the capture device.** The file is missing from `/data/input`, or a Windows path was passed into the container. Use `-i /data/input/<name>.mp4`.
-- **No CSV directory.** The run still tracked blobs, but every object was over the 6 mm² cluster cutoff for the chosen `-z`. Inspect the overlay, then rerun with the other original dish preset (84 or 138) if the physical dish matches it.
-- **`H264` / `avc1` message on stderr.** Ubuntu 18.04's FFmpeg build of OpenCV rewrites the H264 fourcc to `avc1` and still writes the mp4. The process continues.
-- **`set_int: Column 0 out of range`.** Printed by lp_solve during the original assignment step. The run used here still reported `LPSOLVE: Found 1 solutions` and `RES: OK`.
+A command-line run of the tracker does not create the group/condition/trial folders. Copy `YYYYMMDD_HHMMSS-data/*.csv` into a `group/condition/trial/` directory and put `metadata.txt` in that trial's `vidAndLogs` before opening the app on that folder.
+
+Results are written next to the selected experiment as `<name>_analyzed.csv` and `<name>_analyzed.rds`, on the host under `data/`.
+
+To run the same analysis without the browser, for the GUI output of a 5-second, 16 fps, 9 cm recording:
+
+```bash
+docker compose run --rm --entrypoint Rscript visualizer -e 'source("global.R"); dir.create("/data/analysis/example", recursive=TRUE, showWarnings=FALSE); process_data_dt(input_dir="/data/gui_output", output_dir="/data/analysis/example", save_as="example", radius=42.5, drop_contours=TRUE, frame_rate=16, video_length=5)'
+```
+
+## If something goes wrong
+
+- **Error setting up the capture device.** The video is not in `/data/input`, or a Windows path such as `C:\...` was passed into the container. Use `-i /data/input/<name>.mp4`.
+- **Overlay video, and no CSV folder.** Every detected object was above the 6 mm² cluster cutoff for the `-z` you chose. Check the overlay, then run again with the diameter of the dish you filmed (84 or 138).
+- **`H264` / `avc1` on the tracker log.** OpenCV writes the mp4 with the `avc1` codec. The file is still produced.
+- **`set_int: Column 0 out of range`.** Printed by the assignment solver while it searches. A finished run continues and prints `FINISHED!!!`.
 - **Output files owned by root.** Set `IMBA_UID` and `IMBA_GID` as shown above.
-- **`/data/output` is not writable.** The output directory must exist on the host before `docker compose run`.
+- **`/data/output` is not writable.** Create `data/output` on the host before `docker compose run`.
 
-## Native build
+## Install without Docker
 
-`IMBAtracker/IMBtracker_cpp/setup.sh` is the original Debian/Ubuntu script: it installs the libraries above, unpacks `cvblob.zip`, and runs `cmake` and `make` in place. It calls `apt` without `-y`, so it is interactive, and `make` replaces the GUI launcher script with the compiled binary. `IMBAtracker/setup.sh` then starts the PyQt GUI. Prefer the Docker image for a non-interactive run, and the [GUI](#track-through-the-gui) and [visualizer](#imbavisualizer) sections to drive the same outputs from the window and from Shiny.
+`IMBAtracker/IMBtracker_cpp/setup.sh` installs the tracker libraries on Debian or Ubuntu, unpacks `cvblob.zip`, and compiles `lrvTrack` in place. It asks for confirmation at the `apt` prompts. The compile also needs `libtbb-dev`. Compiling in that directory replaces the GUI launcher, so use the compiled `lrvTrack` directly or restore the launcher from git afterwards.
+
+`IMBAtracker/setup.sh` starts the PyQt GUI after that build. `IMBAvisualizer/legacy/setup.sh` is the older R-package install of the visualizer. The Docker commands above are the straightforward way to run both.
